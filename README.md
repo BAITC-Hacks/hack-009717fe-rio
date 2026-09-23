@@ -41,6 +41,12 @@ Run the automated checks:
 python -m unittest discover -s tests -v
 ```
 
+Audit the complete runtime catalog, including team-added profiles:
+
+```sh
+python tools/audit_data.py --include-synthetic --markdown
+```
+
 There is no public deployment. A localhost URL is accessible on the machine running the server, not a publicly hosted service.
 
 ## User Journey
@@ -152,5 +158,6 @@ Run the test command above for current results. Prior local runs completed all t
 - [English participant instructions](docs/participant-instructions.en.md)
 - [English challenge brief](docs/brief.en.md)
 - [Russian README for the organizers](docs/README.ru.md)
+- [Participant 3 data audit and demo checklist](docs/participant3-data-audit.md)
 
 The organizers require the final code in the assigned team repository and a separate submission through the hackathon platform. Prepared text is not proof of submission. A public deployment link is required only if a deployment exists. API activation is not needed by this implementation and is not performed by the project.

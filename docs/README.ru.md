@@ -31,6 +31,12 @@ python app.py
 python -m unittest discover -s tests -v
 ```
 
+Проверить полный runtime-каталог, включая дополнительные профили команды:
+
+```sh
+python tools/audit_data.py --include-synthetic --markdown
+```
+
 Публичной deployed-версии нет. Адрес localhost — локальное демо на компьютере, где запущен сервер.
 
 ## Сценарий пользователя
