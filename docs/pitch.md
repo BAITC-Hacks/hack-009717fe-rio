@@ -1,4 +1,4 @@
-# Rio Defense Script — Three Minutes
+# Речь Rio для защиты — три минуты
 
 ## Команда
 
@@ -6,29 +6,29 @@
 - **Мирас Ринатулы** — backend/API, ограничения, ранжирование и объяснения.
 - **Айназ Абитай** — данные, аудит, тестовые сценарии, README и доказательства воспроизводимости.
 
-The customer already has a catalog and needs help deciding whom to choose. Rio narrows the selection to three profiles and explains why each one qualifies.
+## Текст выступления
 
-We first check city and category, then availability, budget, event format, language and duration. An unavailable vendor cannot enter the recommendations. Venues follow exactly the same pipeline.
+У заказчика уже есть каталог подрядчиков своего города, но выбрать подходящего вручную сложно: нужно одновременно проверить дату, цену, формат, язык и длительность. Rio принимает эти условия и сокращает каталог до трёх подходящих профилей. Каждая карточка показывает конкретные выполненные условия и цитату из исходного описания.
 
-Let us demonstrate a corporate event on October 4. Four candidates pass the constraints, and we display three. Preferences affect their order through transparent lexical matching. Cards contain specific facts and quotations from the profiles. This is an explainable baseline, without generated claims.
+Сначала покажем корпоративное мероприятие 4 октября в Алматы. Четыре кандидата проходят ограничения, а интерфейс показывает три лучших. Пожелания влияют на порядок через прозрачное совпадение слов, после чего учитываются цена и стабильный ID. В карточке нет придуманных обещаний: объяснение строится на полях профиля.
 
-Now we change only the date to October 1. The previous three vendors are unavailable. The interface explicitly explains this and shows different candidates. Repeating the request preserves the order.
+Теперь меняем только дату на 1 октября. Часть прежних подрядчиков занята, поэтому подбор меняется, а причины видны в аудите исключений. Повторный одинаковый запрос возвращает тот же порядок.
 
-For florists, we show two options and explain why there are fewer than three. With an insufficient budget, we show rejection reasons. A category missing from a city is a separate outcome.
+Для редкой категории покажем меньше трёх вариантов и объясним почему. При слишком маленьком бюджете сервис возвращает `no_match` с причинами. Если в городе нет категории, это отдельное состояние `no_category`, а не ошибка интерфейса.
 
-The service starts with one command and requires no keys or third-party Python packages. All 66 source profiles are preserved inside the expanded 200-profile runtime catalog; synthetic records are explicitly labeled and the separate audit artifact is retained. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
+Проект запускается одной командой, не требует ключей и внешних Python-пакетов. В runtime-каталоге 200 профилей, исходные 66 записей сохранены, синтетические добавления помечены и вынесены в отдельный аудит-артефакт.
 
-## Questions from Judges
+## Ответы на вопросы жюри
 
-- **Where is the AI?** Development used the Codex AI agent. The running service uses a lexical baseline, not an LLM. We do not claim semantic understanding. A possible next step is embeddings with measured quality.
-- **Why not rank only by price?** When preferences are supplied, weighted text overlap comes first and price second. Specific evidence on each card is more important than the order alone.
-- **Why are there so few December options?** The source calendars reflect seasonal demand. We do not invent available candidates.
-- **Why not search a neighboring city?** The challenge is to select within the chosen catalog, not expand it automatically.
-- **What does a starting price mean?** It is a minimum advertised price, not a confirmed final quote.
-- **How can we reproduce the result?** Run `python app.py` and use the six numbered scenario buttons. Run checks with `python -m unittest discover -s tests -v`.
+- **Где AI?** Codex использовался при разработке. Рабочий сервис использует объяснимый лексический baseline, а не LLM. Следующим шагом могут стать embeddings с измерением качества.
+- **Почему не сортировка только по цене?** Пожелания учитываются прежде цены, поэтому релевантность не теряется из-за дешёвого, но неподходящего профиля.
+- **Почему мало вариантов в декабре?** Это отражение календаря исходного набора. Мы не придумываем свободные даты.
+- **Почему не соседний город?** Задача требует выбирать из каталога выбранного города. Город не меняется автоматически.
+- **Что означает цена «от»?** Это минимальная указанная цена профиля, а не подтверждённая итоговая смета.
+- **Как воспроизвести результат?** Запустить `python app.py`, нажать сценарии 01–06 и проверить `python -m unittest discover -s tests -v`.
 
-## Suggested Speaking Order
+## Порядок выступления
 
-1. Темирлан Досмухамбетов демонстрирует русскоязычный сайт и путь пользователя.
-2. Мирас Ринатулы объясняет валидацию, фильтрацию, ранжирование и детерминированный порядок.
-3. Айназ Абитай демонстрирует тесты, редкие и пустые исходы, целостность источника и ограничения.
+1. Темирлан показывает сайт, форму и карточки.
+2. Мирас объясняет API, фильтры, ранжирование и детерминированный порядок.
+3. Айназ показывает тесты, редкие и пустые исходы, целостность каталога и README.

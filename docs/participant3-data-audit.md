@@ -2,9 +2,9 @@
 
 Третий участник команды — **Айназ Абитай**. Этот документ фиксирует её зону ответственности и доказательства для защиты.
 
-This document records the data checks and presentation evidence owned by the third participant.
+Айназ отвечает за качество каталога, происхождение добавленных профилей, тестовые сценарии, README и скриншоты.
 
-## Source snapshot
+## Снимок источника
 
 - Source file: `data/contractors.csv` (66 original profiles preserved inside the expanded catalog)
 - Additional file: `data/synthetic_profiles.csv` (separate audit artifact)
@@ -14,25 +14,25 @@ This document records the data checks and presentation evidence owned by the thi
 - Calendar window: 2026-09-23 through 2026-12-31 (100 days)
 - Categories: 30
 
-The source file remains unchanged. Existing `synthetic`, `city_imputed` and `price_imputed` flags must not be removed or silently rewritten.
+Исходные записи сохранены. Поля `synthetic`, `city_imputed` и `price_imputed` нельзя удалять или незаметно переписывать.
 
-## What to verify after a data change
+## Что проверять после изменения данных
 
-Run the complete suite from the repository root:
+Запустить полный набор из корня репозитория:
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Run the focused catalog audit before the demo:
+Перед демо запустить аудит каталога:
 
 ```bash
 python3 tools/audit_data.py --include-synthetic --markdown
 ```
 
-Exit code `0` means the catalog passed. A non-zero exit code identifies a data error that must be fixed or explicitly discussed before submission.
+Код выхода `0` означает, что каталог прошёл проверку. Ненулевой код указывает на ошибку данных, которую нужно исправить или отдельно объяснить жюри.
 
-The following checks are mandatory before a demo:
+Перед демо обязательны следующие проверки:
 
 1. Every profile has a unique `id`.
 2. Every price is positive and numeric.
@@ -45,7 +45,7 @@ The following checks are mandatory before a demo:
 9. A missing city/category combination returns `no_category`.
 10. A category with candidates but impossible constraints returns `no_match` and reasons.
 
-## Demo sequence
+## Последовательность демо
 
 Show these cases in order:
 
@@ -55,14 +55,14 @@ Show these cases in order:
 4. Impossible budget: show `no_match` and the exclusion audit.
 5. Missing city/category pair: show `no_category`.
 
-Do not turn the demo buttons into canned answers. They must call the same recommendation endpoint as the form.
+Кнопки демо не должны быть заготовленными ответами: они вызывают тот же endpoint рекомендаций, что и форма.
 
-## Synthetic profiles
+## Синтетические профили
 
-The challenge permits additional profiles when they use the same schema and are marked `synthetic: true`. If the team adds profiles, keep them in a separately reviewed data file or merge them explicitly in `load_profiles()`. Do not replace the supplied catalog, create duplicate IDs or tune availability only for the demo date. Record the number and provenance of added profiles in the README and in the presentation.
+Дополнительные профили допустимы, если используют ту же схему и отмечены `synthetic: true`. Нельзя заменять исходный каталог, создавать повторяющиеся ID или настраивать занятость только под дату демо. Количество и происхождение добавленных профилей нужно указывать в README и презентации.
 
-## Speaking notes
+## Текст для защиты
 
 > Мы проверяем не только успешные рекомендации. Для каждой заявки сохраняем причины исключения, отдельно показываем отсутствие категории и ситуацию, когда кандидаты есть, но условия не проходят. Исходный каталог сохранён; синтетические записи помечаются явно и проходят тот же фильтр.
 
-The third participant owns this evidence, the data provenance explanation and the final reproducibility check. The backend logic remains owned by the backend participant, and UI changes remain coordinated with the frontend participant.
+Айназ показывает эти доказательства, объясняет происхождение данных и проводит финальную проверку воспроизводимости. Backend остаётся зоной Мирас, а изменения интерфейса согласуются с Темирланом.
