@@ -59,7 +59,7 @@ python tools/audit_data.py --include-synthetic --markdown
 
 Каждый участник отвечает за свою часть и участвует в общей проверке перед Demo Day.
 
-Чек-листы участников: [Темирлан — frontend](README.temirlan.md), [Мирас — backend](README.miras.md), [Айназ — аудит данных и демо](participant3-data-audit.md).
+Чек-листы участников: [Темирлан — frontend](README.temirlan.md), [Мирас — backend](README.miras.md), [Айназ — аудит данных и демо](README.ainaz.md).
 
 ## Скриншоты
 
