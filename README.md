@@ -88,7 +88,7 @@ python tools/audit_data.py --include-synthetic --markdown
 | **Мирас Ринатулы** | Backend и алгоритм: `app.py`, API, валидация, фильтры, ранжирование и объяснения | Почему кандидат проходит или исключается и почему порядок рекомендаций повторяемый |
 | **Айназ Абитай** | Данные, аудит, тестовые сценарии и документация: каталог, `tools/audit_data.py`, README и материалы демо | Целостность каталога, редкую категорию, пустую выдачу, смену даты и воспроизводимость |
 
-Подробные инструкции участников: [README Темирлана — frontend](docs/README.temirlan.md), [инструкция Мираса — backend](docs/participant2-backend.md), [инструкция Айназ — данные и демо](docs/participant3-data-audit.md).
+Подробные README участников: [Темирлан — frontend](docs/README.temirlan.md), [Мирас — backend](docs/README.miras.md), [Айназ — данные и демо](docs/participant3-data-audit.md).
 
 ## Скриншоты интерфейса и демо
 
