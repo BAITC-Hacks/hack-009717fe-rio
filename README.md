@@ -1,23 +1,21 @@
-# Rio — Smart Event Vendor Matching
+# Rio — умный подбор подрядчиков
 
-A working solution for **HackAlem AI challenge #79-lite**. Rio helps event customers in Kazakhstan choose up to three vendors from an existing catalog, explaining recommendations through request constraints and quotations from profiles. Individual vendors, groups and venues share the same matching pipeline.
+Рабочее решение HackAlem AI, кейс **#79-lite**. Для заказчика мероприятия в Казахстане Rio сокращает каталог до трёх подходящих подрядчиков и объясняет выбор условиями запроса и цитатами из профилей. Поддерживаются люди, коллективы и площадки.
 
-**Language policy:** developer documentation, comments and identifiers are English. The website, user-facing API messages, demo labels and original catalog remain Russian, as requested. The [Russian README](docs/README.ru.md) is retained for the organizers' submission requirement. Original organizer documents are preserved in their source language.
+## Что реализовано
 
-## Implemented Features
+- Город, дата, формат, категория и бюджет; необязательные язык, длительность и пожелания.
+- Строгая проверка занятости, бюджета, формата, языка и часов.
+- До трёх карточек с ценой, конкретными причинами, цитатой и полным описанием.
+- Стабильное текстовое ранжирование, затем цена и ID.
+- Три отдельных исхода: подобрали; категории в городе нет; кандидаты не проходят условия.
+- Объяснение короткой выдачи, причины исключения каждого кандидата и сравнение двух дат.
+- Пометки синтетических профилей и проставленных при подготовке цен и городов.
+- Шесть демонстрационных сценариев и адаптивный русский интерфейс.
 
-- Required city, date, event format, category and budget; optional language, duration and preferences.
-- Strict availability, budget, format, language and duration checks.
-- Up to three cards containing prices, specific reasons, quotations and complete descriptions.
-- Deterministic lexical ranking, followed by price and ID.
-- Three distinct outcomes: matches found, category absent, or candidates failing constraints.
-- Explanations for short lists, per-profile rejection reasons and date comparisons.
-- Labels for synthetic profiles and imputed prices and cities.
-- Six interactive demo scenarios and a responsive Russian-language interface.
+## Установка и запуск
 
-## Installation and Startup
-
-Requires **Python 3.10+**. No third-party Python packages, database setup or API keys are needed.
+Нужен **Python 3.10+**. Устанавливать библиотеки, базу данных и получать API-ключи не требуется.
 
 ```sh
 git clone https://github.com/BAITC-Hacks/hack-009717fe-rio.git
@@ -25,86 +23,78 @@ cd hack-009717fe-rio
 python app.py
 ```
 
-Open **http://127.0.0.1:8000**. Stop the server with Ctrl+C. To use another port:
+Откройте **http://127.0.0.1:8000**. Остановка — Ctrl+C. Другой порт: `python app.py --port 8080`.
 
-```sh
-python app.py --port 8001
-```
-
-On Windows, `./start.ps1` finds either Python on PATH or the Python runtime bundled with an installed Codex application. If your Python command is named `python3`, use it instead of `python`.
-
-In WebStorm, open the repository folder and run the startup command from its terminal. If PowerShell refuses to execute the startup script, run the installed Python executable directly; changing system execution policy is not necessary. See the [backend walkthrough](docs/backend-guide.md).
-
-Run the automated checks:
+На Windows также можно запустить `./start.ps1` из PowerShell: скрипт находит системный Python или Python из установленного Codex. Если команда `python` называется `python3`, используйте её в командах выше и ниже.
 
 ```sh
 python -m unittest discover -s tests -v
 ```
 
-Audit the complete runtime catalog, including team-added profiles:
+Проверить полный runtime-каталог, включая дополнительные профили команды:
 
 ```sh
 python tools/audit_data.py --include-synthetic --markdown
 ```
 
-There is no public deployment. A localhost URL is accessible on the machine running the server, not a publicly hosted service.
+Публичной deployed-версии нет. Адрес localhost — локальное демо на компьютере, где запущен сервер.
 
-## User Journey
+## Сценарий пользователя
 
-Enter event requirements and select the matching button. The service checks mandatory constraints and shows up to three cards. Quotations highlight differences, while expandable sections expose the full source description and reasons for excluding alternatives. Change only the date and repeat the request to see which previously selected vendors are now unavailable.
+Укажите параметры события и нажмите «Подобрать подрядчиков». Сервис проверит обязательные условия и покажет до трёх карточек. Цитаты помогают увидеть отличия; раскрывающиеся секции показывают исходное описание и причины исключения альтернатив. Для сравнения дат измените только дату и повторите запрос: интерфейс объяснит, кто из прежней тройки теперь занят.
 
-## Three-Minute Demonstration
+## Проверка жюри за три минуты
 
-All queries are available as numbered buttons above the results. The English scenario names below describe the existing Russian buttons.
+Все запросы доступны кнопками над результатами.
 
-| Scenario | Parameters | Expected behavior |
+| Сценарий | Параметры | Ожидаемое поведение |
 |---|---|---|
-| 01. Autumn corporate event | Almaty, event host, corporate event, October 4, 2026, KZT 1,500,000, 4 hours, Russian; preferences for refined humor and improvisation | Four eligible profiles, three displayed; ranking selects from a larger pool |
-| 02. Another date | Same request on October 1, 2026 | Previous shortlist is unavailable; new results and a calendar explanation appear |
-| 03. Rare category | Almaty, florist, wedding, October 4, 2026, KZT 500,000, 8 hours | Two cards with a short-list explanation; null hour limits do not exclude florists |
-| 04. Insufficient budget | Scenario 01 with a KZT 10,000 budget | Candidates exist but none qualify; rejection reasons are available |
-| 05. Category absent | Abroad, florist | Separate category-not-found state |
-| 06. Banquet hall | Almaty, corporate event, November 14, 2026, KZT 7,000,000 | Venues follow the same calendar and filtering rules |
+| 01 · Осенний корпоратив | Алматы, ведущий, корпоратив, 04.10.2026, 1 500 000 ₸, 4 ч, русский; пожелания «интеллигентный юмор импровизация» | 4 подходящих профиля, показаны 3; ранжирование реально выбирает из большего пула |
+| 02 · Другая дата | Тот же запрос, 01.10.2026 | Прошлая тройка занята; выдача меняется, причины видны над карточками |
+| 03 · Редкая категория | Алматы, флорист, свадьба, 04.10.2026, 500 000 ₸, 8 ч | 2 карточки с объяснением, почему меньше трёх; `max_hours=null` не исключает флориста |
+| 04 · Бюджет не проходит | Запрос 01, бюджет 10 000 ₸ | Кандидаты есть, но подходящих нет; перечислены причины |
+| 05 · Нет категории | Зарубежье, флорист | Отдельное состояние отсутствующей категории |
+| 06 · Банкетный зал | Алматы, корпоратив, 14.11.2026, 7 000 000 ₸ | Площадки проходят тот же календарь и фильтры |
 
-Repeat a request to verify stable ordering. Date comparison uses the previous successful request and appears only if all other parameters remain unchanged.
+Повторите запрос — порядок не изменится. Сравнение дат использует предыдущий успешный запрос с теми же остальными параметрами.
 
-## Technology and Architecture
+## Технологии и архитектура
 
-**Backend:** Python standard library (`http.server`, `csv`, `json`, `datetime`, `unittest`). **Frontend:** HTML, CSS and JavaScript without a build step. **Storage:** local CSV. Development was assisted by the Codex AI agent. The running application does not call an LLM, embedding model or external AI API.
+**Backend:** Python, только стандартная библиотека (`http.server`, `csv`, `json`, `datetime`, `unittest`). **Frontend:** HTML, CSS, JavaScript без сборщика. **Данные:** локальный CSV. Разработка выполнена с AI-агентом Codex. В исполняемом сервисе нет LLM, embeddings или внешнего AI API.
 
 ```text
-Browser -> POST /api/recommend -> validation
-        -> city/category pool -> mandatory filters
-        -> lexical ranking -> top three + facts + quotations + audit
+Браузер → POST /api/recommend → валидация
+        → выбор города/категории → жёсткие фильтры
+        → лексическое ранжирование → top-3 + факты + цитаты + аудит
 ```
 
-| Component | Responsibility |
+| Компонент | Назначение |
 |---|---|
-| `app.py` | API, CSV loading, filters, ranking, explanations and demo queries |
-| `web/` | Form, cards, date comparison and responsive styling |
-| `data/contractors.csv` | Runtime catalog: 200 profiles across 30 categories; original 66 preserved |
-| `data/contractors.xlsx` | Excel copy of the catalog with filters and a frozen header |
-| `data/synthetic_profiles.csv` | 12 team-added profiles, all marked `synthetic=True` |
-| `tests/test_app.py` | Behavioral and acceptance checks |
-| `docs/` | Specification, guides, pitch, submission text and source materials |
-| `start.ps1` | Windows launcher |
+| `app.py` | API, загрузка CSV, фильтры, ранжирование, объяснения, демосценарии |
+| `web/` | Форма, карточки, сравнение дат, адаптивный дизайн |
+| `data/contractors.csv` | Runtime-каталог на 200 профилей и 30 категорий; исходные 66 сохранены |
+| `data/contractors.xlsx` | Excel-копия расширенного каталога с фильтрами и закреплённой строкой |
+| `data/synthetic_profiles.csv` | Отдельный аудит-артефакт с 12 профилями команды, не добавляемый повторно в runtime |
+| `tests/test_app.py` | Автоматическая проверка требований |
+| `docs/` | Исходное задание, превью, инструкция, речь и текст для сдачи |
+| `start.ps1` | Запуск на Windows |
 
-### Matching Decisions
+### Как принимается решение
 
-1. Validate required fields, positive budget and optional hours, known formats/languages and the calendar date. Dates outside September 23–December 31, 2026 are rejected: missing calendar coverage must not be interpreted as availability.
-2. Select profiles by exact city and membership in the category array. Travel mentioned in a description does not automatically expand the geographic filter.
-3. Exclude unavailable profiles, starting prices above budget, unsupported formats, missing requested languages and insufficient hours. A null `max_hours` means attendance is not hourly. Constraints are never silently relaxed.
-4. Tokenize preferences, normalize the Russian letter yo to ye, and discard short and selected stop words. Use the first six letters for approximate word-form matching. The score is the sum of `ln(1 + N / (1 + df))` over unique matching prefixes, where N is the loaded catalog size and df is the number of descriptions containing a prefix. Rarer matches have greater weight. Break ties by lower price, then string ID. Sum in sorted order to avoid nondeterminism.
-5. Build a factual explanation and select a quotation with the most matching prefixes, truncated to approximately 240 characters. The full description remains available.
-6. Return cards and an exclusion audit. Reason counts can overlap: a vendor may be both unavailable and over budget.
+1. Проверяются обязательные поля, положительные бюджет и часы, известные форматы/языки и календарная дата. Вне 23.09–31.12.2026 запрос отклоняется: отсутствие данных нельзя считать свободным днём.
+2. Выбирается пул по точному городу и наличию категории в массиве. Упоминание поездок в описании не расширяет географию автоматически.
+3. Исключаются занятые, превышающие бюджет по цене «от», не берущие формат, не поддерживающие указанный язык или часы. `max_hours=null` означает отсутствие привязки к присутствию. Ограничения не ослабляются автоматически.
+4. Пожелания разбиваются на слова; `ё` заменяется на `е`, короткие и служебные слова удаляются. Первые 6 букв используются для приблизительного сопоставления форм. Балл — сумма `ln(1 + N/(1 + df))` по уникальным совпавшим основам, где N — размер загруженного каталога, df — число описаний с основой. Редкие совпадения весят больше. Затем меньшая цена, затем строковый ID. Суммирование идёт в отсортированном порядке. Случайности нет.
+5. Первое предложение объяснения перечисляет выполненные условия. Затем идёт точная цитата из описания с наибольшим количеством текстовых совпадений, до 240 символов. Полный источник можно раскрыть.
+6. Возвращаются карточки и аудит исключений. Счётчики причин могут пересекаться: один профиль может одновременно быть занят и превышать бюджет.
 
-This is a **deterministic lexical baseline, not a semantic model**. It does not understand negation or synonyms, and prefix matching can be inaccurate. Preferences are a soft signal. Card details show the score, matched prefixes and whether direct matches are absent.
+Это **детерминированный лексический baseline, не семантическая модель**. Он не понимает отрицания и синонимы, а совпадение первых букв может быть неточным. Пожелания — мягкий сигнал. В карточке доступны численный балл и совпавшие основы; отсутствие прямых совпадений явно отмечено в деталях.
 
 ## API
 
-`GET /api/meta` returns field options, statistics, calendar boundaries and demo requests.
+`GET /api/meta` — варианты полей, статистика, границы календаря и готовые запросы.
 
-`POST /api/recommend` accepts `Content-Type: application/json`:
+`POST /api/recommend`, `Content-Type: application/json`:
 
 ```json
 {
@@ -119,45 +109,50 @@ This is a **deterministic lexical baseline, not a semantic model**. It does not 
 }
 ```
 
-Russian values are intentional: they are the actual catalog values consumed by the unchanged website. This example requests an event host in Almaty for a corporate event, with Russian as the working language and preferences for refined humor and improvisation. Use `/api/meta` for accepted values rather than translating enum values on the client.
+Ответ: `status` (`matched`, `no_category`, `no_match`), `message`, `cards` (0–3), `pool_count`, `eligible_count`, `rejected`, `exclusion_counts`, `elapsed_ms`. Ошибка входных данных — HTTP 400 с `error`. Пустая выдача — штатный HTTP 200. Время измеряет серверный подбор, не сетевую задержку.
 
-Responses contain `status` (`matched`, `no_category`, `no_match`), `message`, `cards` (zero to three), `pool_count`, `eligible_count`, `rejected`, `exclusion_counts` and `elapsed_ms`. Invalid input returns HTTP 400 with `error`. An empty recommendation is a normal HTTP 200 outcome. Timing measures server-side matching, not network latency.
+В runtime-каталоге 200 профилей по 30 категориям, включая 147 синтетических. Исходные 66 записей сохранены без изменений; ещё 134 демонстрационные записи добавляют 13 категорий. Синтетические записи имеют `synthetic=True`, а подготовленные цены — `price_imputed=True`. Отдельный файл `data/synthetic_profiles.csv` сохраняется для аудита и не добавляется повторно.
 
-## Data, Sources and External Services
+## Данные, источники и внешние сервисы
 
-The runtime catalog contains 200 profiles across 30 categories, including 147 synthetic profiles. The original 66 records are preserved unchanged; 134 generated demonstration profiles add 13 categories. New profiles have synthetic=True and price_imputed=True; their descriptions, prices and calendars are fictional. The linked source CSV and HTML preview represent the original 66-record catalog. The local Excel copy contains the expanded catalog. The separately labelled `data/synthetic_profiles.csv` artifact is retained for audit context and is not loaded into runtime.
+В исходном CSV и HTML-превью — 66 профилей организаторов. Расширенный runtime-каталог находится в `data/contractors.csv`; его локальная Excel-копия — в `data/contractors.xlsx`.
 
-- [Challenge brief](https://docs.google.com/document/d/1rhR2HFY164BrnkIP39N3usY9fNY4JeAgkPxEzbqL00w/edit)
-- [CSV dataset](https://drive.google.com/file/d/1uUCu-szctwaTaV0-Yfg3FKHY8M3lQ3vw/view)
-- [HTML preview](https://drive.google.com/file/d/1IZhWdv53wujvRMHWTA47t9V1UqulmMPs/view)
-- [Participant instructions](https://drive.google.com/file/d/105Rnhzg3Q5tKjfGZIddRqY13kmq_w4r_/view)
+- [Задание](https://docs.google.com/document/d/1rhR2HFY164BrnkIP39N3usY9fNY4JeAgkPxEzbqL00w/edit)
+- [CSV](https://drive.google.com/file/d/1uUCu-szctwaTaV0-Yfg3FKHY8M3lQ3vw/view)
+- [HTML-превью](https://drive.google.com/file/d/1IZhWdv53wujvRMHWTA47t9V1UqulmMPs/view)
+- [Инструкция участникам](https://drive.google.com/file/d/105Rnhzg3Q5tKjfGZIddRqY13kmq_w4r_/view)
 
-Matching is local. The browser may load Manrope from Google Fonts; a system font is available offline. No API keys are required. The organizers have not declared a separate license for their source materials. Follow their repository access and data-sharing requirements; inclusion here does not grant permission to redistribute the dataset.
+Подбор полностью локальный. Браузер может загрузить Manrope через Google Fonts; без интернета доступен системный шрифт. API-ключей в проекте нет. Отдельная лицензия на исходные материалы организаторами не заявлена.
 
-## Verification
+## Проверки
 
-Ten automated tests cover data integrity; constraint checks across 100 dates and 30 categories; deterministic ordering under catalog reordering; all three outcomes and demos; calendar-driven date changes; budget boundaries; null hour limits; optional filters; invalid requests; grounded quotations; and execution time. Individual tests may cover several properties.
+10 тестов: целостность датасета; 100 дней × 30 категорий с проверкой всех ограничений; детерминизм при перестановке каталога; три исхода и демо; изменение выдачи по занятости; бюджет на границе; `null`-часы; дополнительные фильтры; неверные запросы; достоверность цитат; быстродействие. Один тест может проверять несколько свойств.
 
-Run the test command above for current results. Prior local runs completed all ten tests in approximately 0.3 seconds. These measurements are not a production load guarantee.
+Контрольный запуск: 10 тестов прошли примерно за 0,27 с. В браузере серверный подбор на начальном сценарии занял менее 1 мс. Это локальное измерение, не нагрузочное обещание.
 
-## Limitations and Future Work
+## Ограничения и развитие
 
-- Starting prices do not guarantee a final quote.
-- Availability is an educational calendar snapshot, not live booking. No inquiries or notifications are sent.
-- Profile claims are labeled as quotations, not independently verified quality assessments.
-- The development HTTP server is bound to localhost. Public production use needs a production server, request limits and monitoring.
-- There is no neural semantic search or fine-tuning. A possible next step is multilingual embeddings evaluated on labeled requests, with hard filters retained before model-based ranking.
-- Any future LLM explanation layer needs factual grounding, caching by dataset version and query, and a deterministic fallback.
+- Цена «от» проверяет стартовую стоимость, не гарантирует итоговую смету.
+- Занятость — снимок учебного календаря, не онлайн-бронирование. Заявок и уведомлений нет.
+- Утверждения из описаний подписаны как цитаты, а не как независимая проверка качества.
+- Учебный HTTP-сервер привязан к localhost. Для публичной эксплуатации нужны production-сервер, ограничение запросов и мониторинг.
+- Нет нейросетевого смыслового поиска и дообучения. Следующий шаг — готовые многоязычные embeddings и оценка качества на размеченных запросах; жёсткие фильтры сохраняются перед моделью.
+- При добавлении LLM нужны ссылки только на факты профиля, кэш по версии данных и запросу, а также детерминированный fallback.
 
-## Documentation and Submission
+## Сдача на платформе
 
-- [Complete English technical specification](docs/Rio_Technical_Specification_EN.md)
-- [Backend walkthrough for participant 2](docs/backend-guide.md)
-- [Defense script](docs/pitch.md)
-- [Submission text](docs/submission.md)
-- [English participant instructions](docs/participant-instructions.en.md)
-- [English challenge brief](docs/brief.en.md)
-- [Russian README for the organizers](docs/README.ru.md)
-- [Participant 3 data audit and demo checklist](docs/participant3-data-audit.md)
+Инструкция требует разместить итоговый код в выданном командном GitHub-репозитории, затем выбрать кейс и нажать «Сдать решение». Готовые название и описание находятся в `docs/submission.md`. Публичный deployment не обязателен; ссылку на него указывают, только если он существует. Активация сторонних API не нужна текущей реализации и не выполняется проектом.
 
-The organizers require the final code in the assigned team repository and a separate submission through the hackathon platform. Prepared text is not proof of submission. A public deployment link is required only if a deployment exists. API activation is not needed by this implementation and is not performed by the project.
+## Вклад третьего участника
+
+Третий участник отвечает за качество данных и воспроизводимость демо:
+
+- проверяет уникальность ID, цены, даты и обязательные поля;
+- запускает `python tools/audit_data.py --include-synthetic --markdown`;
+- контролирует отдельный слой `data/synthetic_profiles.csv`;
+- проверяет сценарии редкой категории, смены даты и пустой выдачи;
+- обновляет README и объясняет жюри происхождение профилей.
+
+Подробный чек-лист: [аудит данных и демо](docs/participant3-data-audit.md).
+
+Английская копия README сохранена в [README.en.md](README.en.md).
