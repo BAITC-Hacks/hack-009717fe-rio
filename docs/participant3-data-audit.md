@@ -21,6 +21,14 @@ Run the complete suite from the repository root:
 python3 -m unittest discover -s tests -v
 ```
 
+Run the focused catalog audit before the demo:
+
+```bash
+python3 tools/audit_data.py --markdown
+```
+
+Exit code `0` means the catalog passed. A non-zero exit code identifies a data error that must be fixed or explicitly discussed before submission.
+
 The following checks are mandatory before a demo:
 
 1. Every profile has a unique `id`.
