@@ -26,7 +26,15 @@ async function search(){
   const audit=r.rejected.length?`<details class="audit"><summary>Почему исключены ${r.rejected.length} из ${r.pool_count} профилей?</summary><p>${Object.entries(r.exclusion_counts).map(([k,n])=>escape(labels[k])+': '+n).join(' · ')}. Один профиль может не пройти несколько условий.</p><ul>${r.rejected.map(p=>`<li>${escape(p.name)}: ${p.reasons.map(k=>escape(labels[k].toLowerCase())).join(', ')}.</li>`).join('')}</ul></details>`:'';
   const title=r.status==='matched'?'Ваша короткая подборка':r.status==='no_category'?'Такой категории пока нет':'На этих условиях не совпали';
   const empty=r.status==='matched'?'':`<div class="empty"><span>↗</span><h2>${r.status==='no_category'?'Попробуйте другой город':'Давайте изменим один параметр'}</h2><p>${r.status==='no_category'?'В каталоге нет сочетания выбранных города и категории. Изменение даты или бюджета этого не исправит.':'Условия не ослабляем автоматически. Посмотрите причины ниже: можно выбрать другую дату, бюджет, формат, язык или длительность.'}</p>${r.exclusion_counts.busy?'<button class="suggestion" id="next-date">Проверить следующий день →</button>':''}</div>`;
-  $('#results').innerHTML=`<div class="result-heading"><div><h2>${title}</h2><p>${escape(r.message)}</p></div><span class="pill">${escape(day(q.date))} · ${escape(q.city)}</span></div>${comparison(q,r)}${r.cards.map((p,i)=>card(p,i,q)).join('')}${empty}${audit}<p class="form-note">Доступность — по учебному календарю датасета. Цена «от» не гарантирует окончательную смету.</p>`;
+  const cards=r.cards.length?`<div class="card-deck" aria-label="Подобранные подрядчики">${r.cards.map((p,i)=>card(p,i,q)).join('')}</div>`:'';
+  $('#results').innerHTML=`<div class="result-heading"><div><h2>${title}</h2><p>${escape(r.message)}</p></div><span class="pill">${escape(day(q.date))} · ${escape(q.city)}</span></div>${comparison(q,r)}${cards}${empty}${audit}<p class="form-note">Доступность — по учебному календарю датасета. Цена «от» не гарантирует окончательную смету.</p>`;
+  document.querySelectorAll('.card-deck .card').forEach((item,index)=>{
+    item.style.setProperty('--deck-index',index);
+    item.tabIndex=0;
+    item.addEventListener('click',()=>{document.querySelectorAll('.card-deck .card').forEach(card=>card.classList.remove('selected'));item.classList.add('selected');});
+    item.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();item.click();}});
+  });
+  document.querySelector('.card-deck .card')?.classList.add('selected');
   previous={q,r};
   if($('#next-date'))$('#next-date').onclick=()=>{const date=new Date(q.date+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+1);const next=date.toISOString().slice(0,10);if(next>meta.end){$('#error').textContent='Это последний день доступного календаря. Выберите более раннюю дату.';$('#error').hidden=false;return;}form.elements.date.value=next;search();};
  }catch(e){if(id===requestId){$('#error').textContent=e.message||'Не удалось связаться с сервером. Повторите запрос.';$('#error').hidden=false;}}finally{if(id===requestId)button.disabled=false;}
