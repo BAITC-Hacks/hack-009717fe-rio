@@ -1,66 +1,67 @@
-# Participant 3 — data audit and demo checklist
+# Айназ Абитай — аудит данных и чек-лист демо
 
-This document records the data checks and presentation evidence owned by the third participant.
+Айназ Абитай — третий участник команды. Она отвечает за качество каталога, происхождение добавленных профилей, тестовые сценарии, README, скриншоты и финальную проверку воспроизводимости перед защитой.
 
-## Source snapshot
+## Снимок источника
 
-- Source file: `data/contractors.csv` (66 original profiles)
-- Additional file: `data/synthetic_profiles.csv` (12 team profiles)
-- Runtime profiles: 78
-- Synthetic profiles in runtime: 25 (13 supplied + 12 team-added)
-- Cities: Алматы — 50, Астана — 15, Зарубежье — 1
-- Calendar window: 2026-09-23 through 2026-12-31 (100 days)
-- Categories: 17
+- основной runtime-файл: `data/contractors.csv`;
+- исходные записи организатора: 66 профилей, сохранены в расширенном каталоге;
+- отдельный файл аудита: `data/synthetic_profiles.csv`;
+- профили в runtime-каталоге: 200;
+- синтетические профили в runtime: 147;
+- города и распределение записей проверяются скриптом аудита из актуального CSV;
+- календарь: с 23 сентября по 31 декабря 2026 года, 100 дней;
+- категории: 30.
 
-The source file remains unchanged. Existing `synthetic`, `city_imputed` and `price_imputed` flags must not be removed or silently rewritten.
+Исходные записи нельзя заменять или незаметно переписывать. Поля `synthetic`, `city_imputed` и `price_imputed` должны сохраняться, потому что по ним жюри понимает происхождение данных и подготовленные значения.
 
-## What to verify after a data change
+## Проверка после изменения данных
 
-Run the complete suite from the repository root:
+Из корня репозитория запустить полный набор тестов:
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Run the focused catalog audit before the demo:
+Перед демо запустить аудит каталога:
 
 ```bash
 python3 tools/audit_data.py --include-synthetic --markdown
 ```
 
-Exit code `0` means the catalog passed. A non-zero exit code identifies a data error that must be fixed or explicitly discussed before submission.
+Код выхода `0` означает, что каталог прошёл проверку. Ненулевой код означает ошибку данных: её нужно исправить до защиты или явно вынести в раздел ограничений.
 
-The following checks are mandatory before a demo:
+Перед демонстрацией проверить:
 
-1. Every profile has a unique `id`.
-2. Every price is positive and numeric.
-3. Every `busy_dates` value is a valid date inside the 100-day window.
-4. Every profile has a city, category, event format and description.
-5. A profile marked `synthetic=true` is visibly labelled in the website.
-6. The same request returns the same card order twice.
-7. A busy profile never appears in `cards`.
-8. A rare category reports fewer than three when that is the actual result.
-9. A missing city/category combination returns `no_category`.
-10. A category with candidates but impossible constraints returns `no_match` and reasons.
+1. У каждого профиля уникальный `id`.
+2. Каждая цена положительная и числовая.
+3. Все значения `busy_dates` — корректные даты внутри 100-дневного календаря.
+4. У каждого профиля есть город, категория, формат мероприятия и описание.
+5. Профили с `synthetic=true` явно помечены в карточке сайта.
+6. Повторный одинаковый запрос возвращает тот же порядок карточек.
+7. Занятый на выбранную дату профиль не появляется в `cards`.
+8. Редкая категория показывает фактическое число вариантов, если их меньше трёх.
+9. Отсутствующая связка города и категории возвращает `no_category`.
+10. Невыполнимые ограничения при наличии кандидатов возвращают `no_match` и причины.
 
-## Demo sequence
+## Последовательность демо
 
-Show these cases in order:
+Показать сценарии в таком порядке:
 
-1. Dense category: Алматы, ведущий, корпоратив, autumn date, normal budget.
-2. Same request on another date: explain which previously shown profiles became busy.
-3. Rare category: флорист or инструменталист; show why fewer than three are returned.
-4. Impossible budget: show `no_match` and the exclusion audit.
-5. Missing city/category pair: show `no_category`.
+1. **Плотная категория:** Алматы, ведущий, корпоратив, дата из осеннего календаря и обычный бюджет.
+2. **Другая дата:** повторить тот же запрос и объяснить, какие профили стали заняты.
+3. **Редкая категория:** флорист или инструменталист; показать, почему вариантов меньше трёх.
+4. **Недостаточный бюджет:** показать `no_match` и аудит исключённых профилей.
+5. **Нет категории:** выбрать город и категорию без сочетания и показать `no_category`.
 
-Do not turn the demo buttons into canned answers. They must call the same recommendation endpoint as the form.
+Кнопки демо не являются заранее записанными ответами. Они вызывают тот же endpoint рекомендаций, что и обычная форма.
 
-## Synthetic profiles
+## Синтетические профили
 
-The challenge permits additional profiles when they use the same schema and are marked `synthetic: true`. If the team adds profiles, keep them in a separately reviewed data file or merge them explicitly in `load_profiles()`. Do not replace the supplied catalog, create duplicate IDs or tune availability only for the demo date. Record the number and provenance of added profiles in the README and in the presentation.
+Дополнительные записи допустимы, если используют ту же схему и отмечены `synthetic: true`. Их нельзя добавлять с повторяющимися ID, нельзя подменять ими исходный каталог и нельзя специально подстраивать календарь только под дату презентации. Количество и происхождение таких записей указываются в README и в речи защиты.
 
-## Speaking notes
+## Что сказать жюри
 
-> Мы проверяем не только успешные рекомендации. Для каждой заявки сохраняем причины исключения, отдельно показываем отсутствие категории и ситуацию, когда кандидаты есть, но условия не проходят. Исходный каталог сохранён; синтетические записи помечаются явно и проходят тот же фильтр.
+> Мы проверяем не только успешные рекомендации. Для каждой заявки сохраняем причины исключения, отдельно показываем отсутствие категории и ситуацию, когда кандидаты есть, но условия не проходят. Исходный каталог сохранён, синтетические записи помечены явно и проходят тот же фильтр, что и исходные профили.
 
-The third participant owns this evidence, the data provenance explanation and the final reproducibility check. The backend logic remains owned by the backend participant, and UI changes remain coordinated with the frontend participant.
+Финальная ответственность Айназ — показать эти доказательства, объяснить происхождение данных и подтвердить, что результат можно воспроизвести. Backend остаётся зоной Мираса, а изменения интерфейса согласуются с Темирланом.

@@ -2,14 +2,18 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/*.py": {
-      "includeFiles": "{app.py,data/contractors.csv}",
+      "includeFiles": "{app.py,back/**,data/contractors.csv,docs/openapi.json}",
       "maxDuration": 10
     }
   },
   "rewrites": [
     { "source": "/", "destination": "/web/index.html" },
     { "source": "/style.css", "destination": "/web/style.css" },
-    { "source": "/app.js", "destination": "/web/app.js" }
+    { "source": "/app.js", "destination": "/web/app.js" },
+    { "source": "/api/v1/meta", "destination": "/api/v1.py?route=meta" },
+    { "source": "/api/v1/health", "destination": "/api/v1.py?route=health" },
+    { "source": "/api/v1/recommendations", "destination": "/api/v1.py?route=recommendations" },
+    { "source": "/api/v1/works/(.*)/ratings", "destination": "/api/v1.py?route=ratings&work_id=$1" }
   ],
   "headers": [
     {

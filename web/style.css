@@ -971,3 +971,147 @@ footer > span {
         transform: none !important;
     }
 }
+
+/* Portfolio */
+
+.portfolio {
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid #e8edf5;
+}
+
+.portfolio-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 11px;
+}
+
+.portfolio-head strong {
+    color: var(--blue);
+    font-size: 12px;
+    letter-spacing: 1.2px;
+}
+
+.portfolio-head span,
+.work-rating,
+.work-copy p {
+    color: var(--muted);
+}
+
+.work-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.work-card {
+    overflow: hidden;
+    background: #f9fbff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+.work-card img,
+.work-placeholder {
+    display: block;
+    width: 100%;
+    height: 96px;
+    object-fit: cover;
+    background: var(--blue-soft);
+}
+
+.work-placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--blue);
+    background: linear-gradient(135deg, var(--blue-soft), var(--mint-soft));
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.work-copy {
+    padding: 11px;
+}
+
+.work-copy > strong {
+    display: block;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.work-rating {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+}
+
+.work-copy p {
+    min-height: 42px;
+    margin: 7px 0;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.rate-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.rate-work {
+    min-width: 34px;
+    min-height: 30px;
+    padding: 5px 7px;
+    color: var(--blue);
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.rate-work:hover,
+.rate-work.selected {
+    color: #ffffff;
+    background: var(--blue);
+    border-color: var(--blue);
+}
+
+.rate-work:disabled {
+    opacity: 0.45;
+    cursor: wait;
+}
+
+.rating-status {
+    display: block;
+    min-height: 17px;
+    margin-top: 5px;
+    color: #17644f;
+    font-size: 10px;
+}
+
+@media (max-width: 1050px) {
+    .work-list {
+        grid-template-columns: 1fr;
+    }
+
+    .work-card {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+    }
+}
+
+@media (max-width: 440px) {
+    .portfolio-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .work-card {
+        grid-template-columns: 1fr;
+    }
+}

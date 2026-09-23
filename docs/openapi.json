@@ -1,0 +1,201 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Rio Backend API",
+    "version": "1.0.0",
+    "description": "API каталога и детерминированного подбора event-подрядчиков. Все пользовательские enum-значения возвращаются в исходном русском виде."
+  },
+  "servers": [{"url": "http://127.0.0.1:8000"}],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "Проверка сервиса и базы",
+        "responses": {"200": {"description": "Сервис готов", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Health"}}}}}
+      }
+    },
+    "/api/v1/meta": {
+      "get": {
+        "summary": "Опции формы и границы календаря",
+        "responses": {"200": {"description": "Метаданные каталога", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Meta"}}}}}
+      }
+    },
+    "/api/v1/vendors": {
+      "get": {
+        "summary": "Каталог подрядчиков",
+        "parameters": [
+          {"name": "city", "in": "query", "schema": {"type": "string"}},
+          {"name": "category", "in": "query", "schema": {"type": "string"}},
+          {"name": "event_format", "in": "query", "schema": {"type": "string"}},
+          {"name": "language", "in": "query", "schema": {"type": "string"}},
+          {"name": "available_on", "in": "query", "schema": {"type": "string", "format": "date"}},
+          {"name": "budget_lte", "in": "query", "schema": {"type": "integer", "minimum": 1}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+          {"name": "offset", "in": "query", "schema": {"type": "integer", "minimum": 0, "default": 0}}
+        ],
+        "responses": {
+          "200": {"description": "Страница каталога", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/VendorPage"}}}},
+          "400": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    },
+    "/api/v1/vendors/{vendor_id}": {
+      "get": {
+        "summary": "Карточка подрядчика",
+        "parameters": [{"name": "vendor_id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Карточка", "content": {"application/json": {"schema": {"type": "object", "properties": {"data": {"$ref": "#/components/schemas/Vendor"}}, "required": ["data"]}}}},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/vendors/{vendor_id}/availability": {
+      "get": {
+        "summary": "Календарь доступности подрядчика",
+        "parameters": [
+          {"name": "vendor_id", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "from", "in": "query", "schema": {"type": "string", "format": "date"}},
+          {"name": "to", "in": "query", "schema": {"type": "string", "format": "date"}}
+        ],
+        "responses": {
+          "200": {"description": "Календарь", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AvailabilityEnvelope"}}}},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/vendors/{vendor_id}/works": {
+      "get": {
+        "summary": "Топ опубликованных работ подрядчика",
+        "parameters": [
+          {"name": "vendor_id", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+          {"name": "offset", "in": "query", "schema": {"type": "integer", "minimum": 0, "default": 0}}
+        ],
+        "responses": {"200": {"description": "Работы по убыванию рейтинга", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkPage"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}
+      },
+      "post": {
+        "summary": "Опубликовать работу подрядчика",
+        "parameters": [{"name": "vendor_id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkCreate"}}}},
+        "responses": {"201": {"description": "Работа опубликована", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkEnvelope"}}}}, "404": {"$ref": "#/components/responses/NotFound"}, "422": {"$ref": "#/components/responses/BadRequest"}}
+      }
+    },
+    "/api/v1/works": {
+      "get": {
+        "summary": "Общий топ работ",
+        "parameters": [
+          {"name": "vendor_id", "in": "query", "schema": {"type": "string"}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20}},
+          {"name": "offset", "in": "query", "schema": {"type": "integer", "minimum": 0, "default": 0}}
+        ],
+        "responses": {"200": {"description": "Работы по убыванию рейтинга", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkPage"}}}}}
+      }
+    },
+    "/api/v1/works/{work_id}": {
+      "get": {
+        "summary": "Работа с последними отзывами",
+        "parameters": [{"name": "work_id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {"200": {"description": "Работа", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkEnvelope"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}
+      }
+    },
+    "/api/v1/works/{work_id}/ratings": {
+      "post": {
+        "summary": "Поставить или изменить оценку клиента",
+        "parameters": [{"name": "work_id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/RatingCreate"}}}},
+        "responses": {"200": {"description": "Оценка учтена и агрегаты пересчитаны", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WorkEnvelope"}}}}, "404": {"$ref": "#/components/responses/NotFound"}, "422": {"$ref": "#/components/responses/BadRequest"}}
+      }
+    },
+    "/api/v1/recommendations": {
+      "post": {
+        "summary": "Подобрать до трёх подрядчиков",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/RecommendationRequest"}}}},
+        "responses": {
+          "200": {"description": "Результат подбора, включая нормальный пустой результат", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/RecommendationResponse"}}}},
+          "415": {"$ref": "#/components/responses/BadRequest"},
+          "422": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "BadRequest": {"description": "Ошибка запроса", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "NotFound": {"description": "Ресурс не найден", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+    },
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "properties": {"status": {"const": "ok"}, "database": {"const": "ok"}, "vendors": {"type": "integer"}, "schema_version": {"type": "string"}},
+        "required": ["status", "database", "vendors", "schema_version"]
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "options": {"type": "object", "properties": {"city": {"type": "array", "items": {"type": "string"}}, "categories": {"type": "array", "items": {"type": "string"}}, "event_formats": {"type": "array", "items": {"type": "string"}}, "languages": {"type": "array", "items": {"type": "string"}}}, "required": ["city", "categories", "event_formats", "languages"]},
+          "count": {"type": "integer"}, "synthetic": {"type": "integer"}, "start": {"type": "string", "format": "date"}, "end": {"type": "string", "format": "date"}, "demos": {"type": "array", "items": {"type": "object"}}, "api_version": {"const": "v1"}
+        },
+        "required": ["options", "count", "synthetic", "start", "end", "demos", "api_version"]
+      },
+      "Vendor": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"}, "anon_name": {"type": "string"}, "categories": {"type": "array", "items": {"type": "string"}}, "city": {"type": "string"}, "city_imputed": {"type": "boolean"}, "synthetic": {"type": "boolean"}, "price_from_kzt": {"type": "integer"}, "price_imputed": {"type": "boolean"}, "event_formats": {"type": "array", "items": {"type": "string"}}, "languages": {"type": "array", "items": {"type": "string"}}, "max_hours": {"type": ["number", "null"]}, "busy_dates": {"type": "array", "items": {"type": "string", "format": "date"}}, "description": {"type": "string"}, "top_works": {"type": "array", "maxItems": 3, "items": {"$ref": "#/components/schemas/Work"}}, "published_work_count": {"type": "integer", "minimum": 0}
+        },
+        "required": ["id", "anon_name", "categories", "city", "city_imputed", "synthetic", "price_from_kzt", "price_imputed", "event_formats", "languages", "max_hours", "busy_dates", "description"]
+      },
+      "VendorPage": {
+        "type": "object",
+        "properties": {"data": {"type": "array", "items": {"$ref": "#/components/schemas/Vendor"}}, "pagination": {"type": "object", "properties": {"limit": {"type": "integer"}, "offset": {"type": "integer"}, "total": {"type": "integer"}}, "required": ["limit", "offset", "total"]}},
+        "required": ["data", "pagination"]
+      },
+      "AvailabilityEnvelope": {
+        "type": "object",
+        "properties": {"data": {"type": "object", "properties": {"vendor_id": {"type": "string"}, "start": {"type": "string", "format": "date"}, "end": {"type": "string", "format": "date"}, "days": {"type": "array", "items": {"type": "object", "properties": {"date": {"type": "string", "format": "date"}, "available": {"type": "boolean"}}, "required": ["date", "available"]}}}, "required": ["vendor_id", "start", "end", "days"]}},
+        "required": ["data"]
+      },
+      "Work": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"}, "vendor_id": {"type": "string"}, "title": {"type": "string"}, "description": {"type": "string"}, "event_format": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "occurred_on": {"type": ["string", "null"], "format": "date"}, "media_urls": {"type": "array", "maxItems": 10, "items": {"type": "string", "format": "uri"}}, "published_at": {"type": "string", "format": "date-time"}, "updated_at": {"type": "string", "format": "date-time"}, "rating_average": {"type": "number", "minimum": 0, "maximum": 5}, "rating_count": {"type": "integer", "minimum": 0}, "ranking_score": {"type": "number", "minimum": 0, "maximum": 5}, "reviews": {"type": "array", "items": {"type": "object"}}
+        },
+        "required": ["id", "vendor_id", "title", "description", "media_urls", "published_at", "updated_at", "rating_average", "rating_count", "ranking_score"]
+      },
+      "WorkCreate": {
+        "type": "object",
+        "properties": {"title": {"type": "string", "minLength": 1, "maxLength": 120}, "description": {"type": "string", "minLength": 1, "maxLength": 2000}, "event_format": {"type": "string"}, "city": {"type": "string"}, "occurred_on": {"type": "string", "format": "date"}, "media_urls": {"type": "array", "maxItems": 10, "items": {"type": "string", "format": "uri"}}},
+        "required": ["title", "description"]
+      },
+      "RatingCreate": {
+        "type": "object",
+        "properties": {"client_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{3,64}$"}, "client_name": {"type": "string", "maxLength": 80}, "score": {"type": "integer", "minimum": 1, "maximum": 5}, "comment": {"type": "string", "maxLength": 1000}},
+        "required": ["client_id", "score"]
+      },
+      "WorkEnvelope": {
+        "type": "object",
+        "properties": {"data": {"$ref": "#/components/schemas/Work"}},
+        "required": ["data"]
+      },
+      "WorkPage": {
+        "type": "object",
+        "properties": {"data": {"type": "array", "items": {"$ref": "#/components/schemas/Work"}}, "pagination": {"type": "object"}, "ranking": {"const": "bayesian_rating"}},
+        "required": ["data", "pagination", "ranking"]
+      },
+      "RecommendationRequest": {
+        "type": "object",
+        "properties": {"city": {"type": "string"}, "date": {"type": "string", "format": "date"}, "event_format": {"type": "string"}, "category": {"type": "string"}, "budget": {"type": "number", "exclusiveMinimum": 0}, "hours": {"type": ["number", "null"], "exclusiveMinimum": 0}, "language": {"type": "string"}, "preferences": {"type": "string", "maxLength": 1000}},
+        "required": ["city", "date", "event_format", "category", "budget"]
+      },
+      "RecommendationResponse": {
+        "type": "object",
+        "properties": {"status": {"enum": ["matched", "no_category", "no_match"]}, "message": {"type": "string"}, "cards": {"type": "array", "maxItems": 3, "items": {"allOf": [{"$ref": "#/components/schemas/Vendor"}, {"type": "object", "properties": {"explanation": {"type": "string"}, "evidence": {"type": "string"}, "text_score": {"type": "number"}, "matched_terms": {"type": "array", "items": {"type": "string"}}}, "required": ["explanation", "evidence", "text_score", "matched_terms"]}]}}, "pool_count": {"type": "integer"}, "eligible_count": {"type": "integer"}, "rejected": {"type": "array", "items": {"type": "object"}}, "exclusion_counts": {"type": "object", "additionalProperties": {"type": "integer"}}, "elapsed_ms": {"type": "number"}, "request_id": {"type": "string"}},
+        "required": ["status", "message", "cards", "pool_count", "eligible_count", "rejected", "exclusion_counts", "elapsed_ms", "request_id"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {"error": {"type": "string"}, "code": {"type": "string"}, "request_id": {"type": "string"}, "details": {"type": "object"}},
+        "required": ["error", "code", "request_id"]
+      }
+    }
+  }
+}
