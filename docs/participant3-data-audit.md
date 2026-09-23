@@ -1,16 +1,18 @@
-# Participant 3 — data audit and demo checklist
+# Айназ Абитай — аудит данных и чек-лист демо
+
+Третий участник команды — **Айназ Абитай**. Этот документ фиксирует её зону ответственности и доказательства для защиты.
 
 This document records the data checks and presentation evidence owned by the third participant.
 
 ## Source snapshot
 
-- Source file: `data/contractors.csv` (66 original profiles)
-- Additional file: `data/synthetic_profiles.csv` (12 team profiles)
-- Runtime profiles: 78
-- Synthetic profiles in runtime: 25 (13 supplied + 12 team-added)
-- Cities: Алматы — 50, Астана — 15, Зарубежье — 1
+- Source file: `data/contractors.csv` (66 original profiles preserved inside the expanded catalog)
+- Additional file: `data/synthetic_profiles.csv` (separate audit artifact)
+- Runtime profiles: 200
+- Synthetic profiles in runtime: 147
+- Cities: проверяются скриптом аудита из актуального CSV
 - Calendar window: 2026-09-23 through 2026-12-31 (100 days)
-- Categories: 17
+- Categories: 30
 
 The source file remains unchanged. Existing `synthetic`, `city_imputed` and `price_imputed` flags must not be removed or silently rewritten.
 

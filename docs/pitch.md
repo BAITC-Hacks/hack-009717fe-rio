@@ -1,5 +1,11 @@
 # Rio Defense Script — Three Minutes
 
+## Команда
+
+- **Темирлан Досмухамбетов** — frontend/UI и демонстрация пользовательского пути.
+- **Мирас Ринатулы** — backend/API, ограничения, ранжирование и объяснения.
+- **Айназ Абитай** — данные, аудит, тестовые сценарии, README и доказательства воспроизводимости.
+
 The customer already has a catalog and needs help deciding whom to choose. Rio narrows the selection to three profiles and explains why each one qualifies.
 
 We first check city and category, then availability, budget, event format, language and duration. An unavailable vendor cannot enter the recommendations. Venues follow exactly the same pipeline.
@@ -10,7 +16,7 @@ Now we change only the date to October 1. The previous three vendors are unavail
 
 For florists, we show two options and explain why there are fewer than three. With an insufficient budget, we show rejection reasons. A category missing from a city is a separate outcome.
 
-The service starts with one command and requires no keys or third-party Python packages. All 66 source profiles are preserved, and 12 additional team-created synthetic profiles are explicitly labeled. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
+The service starts with one command and requires no keys or third-party Python packages. All 66 source profiles are preserved inside the expanded 200-profile runtime catalog; synthetic records are explicitly labeled and the separate audit artifact is retained. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
 
 ## Questions from Judges
 
@@ -23,6 +29,6 @@ The service starts with one command and requires no keys or third-party Python p
 
 ## Suggested Speaking Order
 
-1. Participant 1 demonstrates the Russian-language website and the user journey.
-2. Participant 2 explains validation, filtering, ranking and deterministic tie-breaking.
-3. Participant 3 demonstrates tests, rare and empty outcomes, source integrity and limitations.
+1. Темирлан Досмухамбетов демонстрирует русскоязычный сайт и путь пользователя.
+2. Мирас Ринатулы объясняет валидацию, фильтрацию, ранжирование и детерминированный порядок.
+3. Айназ Абитай демонстрирует тесты, редкие и пустые исходы, целостность источника и ограничения.
