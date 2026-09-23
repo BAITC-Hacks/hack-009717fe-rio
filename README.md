@@ -27,31 +27,28 @@
 - SQLite-каталог, портфолио подрядчиков и клиентские оценки работ.
 - Светлый фирменный стиль Rio, интерактивные 3D-карточки, favicon и метаданные для поисковой выдачи и превью ссылок.
 
-## Как запустить
+## Публичная демонстрация
 
-Нужен **Python 3.10+**. Устанавливать библиотеки, базу данных и получать API-ключи не требуется.
+**[Открыть Rio](https://rio-hackalem-podium.vercel.app/)**
 
-```sh
-git clone https://github.com/BAITC-Hacks/hack-009717fe-rio.git
-cd hack-009717fe-rio
-python app.py
-```
+| Параметр | Значение |
+|---|---|
+| URL | [rio-hackalem-podium.vercel.app](https://rio-hackalem-podium.vercel.app/) |
+| Окружение | Vercel Production |
+| Статус | `READY` |
+| Стек | Static HTML/CSS/JS + Python Functions |
 
-Откройте **http://127.0.0.1:8000**. Остановка — Ctrl+C. Другой порт: `python app.py --port 8080`.
+### Проверено
 
-На Windows также можно запустить `./start.ps1` из PowerShell: скрипт находит системный Python или Python из установленного Codex. Если команда `python` называется `python3`, используйте её в командах выше и ниже.
-
-```sh
-python -m unittest discover -s tests -v
-```
-
-Проверить полный runtime-каталог, включая дополнительные профили команды:
-
-```sh
-python tools/audit_data.py --include-synthetic --markdown
-```
-
-Публичная демонстрация: **[rio-hackalem-podium.vercel.app](https://rio-hackalem-podium.vercel.app/)**.
+- главная страница и API работают;
+- поиск возвращает до трёх подходящих подрядчиков;
+- первое место отображается по центру золотой карточкой;
+- второе место — серебряной карточкой справа;
+- третье место — бронзовой карточкой слева;
+- портфолио и рейтинги отображаются;
+- мобильная версия адаптирована;
+- 17 автоматических тестов успешно пройдены;
+- ошибок в консоли браузера нет.
 
 ### Production deployment
 
