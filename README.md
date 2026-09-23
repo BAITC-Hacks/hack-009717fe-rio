@@ -78,6 +78,7 @@ Browser -> POST /api/recommend -> validation
 | `web/` | Form, cards, date comparison and responsive styling |
 | `data/contractors.csv` | Runtime catalog: 200 profiles across 30 categories; original 66 preserved |
 | `data/contractors.xlsx` | Excel copy of the catalog with filters and a frozen header |
+| `data/synthetic_profiles.csv` | 12 team-added profiles, all marked `synthetic=True` |
 | `tests/test_app.py` | Behavioral and acceptance checks |
 | `docs/` | Specification, guides, pitch, submission text and source materials |
 | `start.ps1` | Windows launcher |
@@ -87,7 +88,7 @@ Browser -> POST /api/recommend -> validation
 1. Validate required fields, positive budget and optional hours, known formats/languages and the calendar date. Dates outside September 23–December 31, 2026 are rejected: missing calendar coverage must not be interpreted as availability.
 2. Select profiles by exact city and membership in the category array. Travel mentioned in a description does not automatically expand the geographic filter.
 3. Exclude unavailable profiles, starting prices above budget, unsupported formats, missing requested languages and insufficient hours. A null `max_hours` means attendance is not hourly. Constraints are never silently relaxed.
-4. Tokenize preferences, normalize the Russian letter yo to ye, and discard short and selected stop words. Use the first six letters for approximate word-form matching. The score is the sum of `ln(1 + N / (1 + df))` over unique matching prefixes, where N=200 and df is the number of source descriptions containing a prefix. Rarer matches have greater weight. Break ties by lower price, then string ID. Sum in sorted order to avoid nondeterminism.
+4. Tokenize preferences, normalize the Russian letter yo to ye, and discard short and selected stop words. Use the first six letters for approximate word-form matching. The score is the sum of `ln(1 + N / (1 + df))` over unique matching prefixes, where N is the loaded catalog size and df is the number of descriptions containing a prefix. Rarer matches have greater weight. Break ties by lower price, then string ID. Sum in sorted order to avoid nondeterminism.
 5. Build a factual explanation and select a quotation with the most matching prefixes, truncated to approximately 240 characters. The full description remains available.
 6. Return cards and an exclusion audit. Reason counts can overlap: a vendor may be both unavailable and over budget.
 
@@ -118,7 +119,7 @@ Responses contain `status` (`matched`, `no_category`, `no_match`), `message`, `c
 
 ## Data, Sources and External Services
 
-The runtime catalog contains 200 profiles across 30 categories, including 147 synthetic profiles. The original 66 records are preserved unchanged; 134 generated demonstration profiles add 13 categories. New profiles have synthetic=True and price_imputed=True; their descriptions, prices and calendars are fictional. The linked source CSV and HTML preview represent the original 66-record catalog. The local Excel copy contains the expanded catalog.
+The runtime catalog contains 200 profiles across 30 categories, including 147 synthetic profiles. The original 66 records are preserved unchanged; 134 generated demonstration profiles add 13 categories. New profiles have synthetic=True and price_imputed=True; their descriptions, prices and calendars are fictional. The linked source CSV and HTML preview represent the original 66-record catalog. The local Excel copy contains the expanded catalog. The separately labelled `data/synthetic_profiles.csv` artifact is retained for audit context and is not loaded into runtime.
 
 - [Challenge brief](https://docs.google.com/document/d/1rhR2HFY164BrnkIP39N3usY9fNY4JeAgkPxEzbqL00w/edit)
 - [CSV dataset](https://drive.google.com/file/d/1uUCu-szctwaTaV0-Yfg3FKHY8M3lQ3vw/view)

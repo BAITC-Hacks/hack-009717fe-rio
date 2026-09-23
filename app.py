@@ -21,8 +21,13 @@ START, END = '2026-09-23', '2026-12-31'
 
 def load_profiles():
     """Load the organizer CSV and convert delimited fields into typed values."""
-    with (ROOT / 'data/contractors.csv').open(encoding='utf-8-sig', newline='') as source:
-        profiles = list(csv.DictReader(source))
+    # contractors.csv is the authoritative expanded runtime catalog.
+    # Keep synthetic_profiles.csv as a separate audit artifact without appending it.
+    paths = [ROOT / 'data/contractors.csv']
+    profiles = []
+    for path in paths:
+        with path.open(encoding='utf-8-sig', newline='') as source:
+            profiles.extend(csv.DictReader(source))
     for p in profiles:
         for key in ('categories', 'languages', 'event_formats', 'busy_dates'):
             p[key] = p[key].split('|') if p[key] else []
@@ -30,6 +35,9 @@ def load_profiles():
             p[key] = p[key].lower() == 'true'
         p['price_from_kzt'] = int(p['price_from_kzt'])
         p['max_hours'] = float(p['max_hours']) if p['max_hours'] else None
+    ids = [p['id'] for p in profiles]
+    if len(ids) != len(set(ids)):
+        raise ValueError('Catalog contains duplicate profile IDs.')
     return profiles
 
 

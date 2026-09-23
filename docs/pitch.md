@@ -10,7 +10,7 @@ Now we change only the date to October 1. The previous three vendors are unavail
 
 For florists, we show two options and explain why there are fewer than three. With an insufficient budget, we show rejection reasons. A category missing from a city is a separate outcome.
 
-The service starts with one command and requires no keys or third-party Python packages. All 66 profiles are preserved, and synthetic profiles and imputed prices are labeled. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
+The service starts with one command and requires no keys or third-party Python packages. All 66 source profiles are preserved, and 12 additional team-created synthetic profiles are explicitly labeled. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
 
 ## Questions from Judges
 
