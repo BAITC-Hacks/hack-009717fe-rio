@@ -161,7 +161,9 @@ async function search() {
     });
     const result = await responseJson(response);
     if (id !== requestId) return;
-    $('#timing').textContent = `${result.elapsed_ms.toFixed(1)} мс`;
+    $('#timing').textContent = Number.isFinite(result.elapsed_ms)
+      ? `${result.elapsed_ms.toFixed(1)} мс`
+      : '';
     const audit = result.rejected.length
       ? `<details class="audit"><summary>Почему исключены ${result.rejected.length} из ${result.pool_count} профилей?</summary><p>${Object.entries(result.exclusion_counts).map(([key, count]) => escape(labels[key]) + ': ' + count).join(' · ')}. Один профиль может не пройти несколько условий.</p><ul>${result.rejected.map(profile => `<li>${escape(profile.name)}: ${profile.reasons.map(key => escape(labels[key].toLowerCase())).join(', ')}.</li>`).join('')}</ul></details>`
       : '';

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from http.server import BaseHTTPRequestHandler
+from time import perf_counter
 from urllib.parse import parse_qs, urlsplit
 
 from app import APPLICATION
@@ -43,7 +44,10 @@ class handler(BaseHTTPRequestHandler):
         try:
             payload = self.json_body()
             if route == "recommendations":
-                return self.respond(APPLICATION.recommend(payload))
+                started = perf_counter()
+                result = APPLICATION.recommend(payload)
+                result["elapsed_ms"] = round((perf_counter() - started) * 1000, 2)
+                return self.respond(result)
             if route == "ratings":
                 work_id = query.get("work_id", [""])[0]
                 rated = APPLICATION.repository.rate_work(
