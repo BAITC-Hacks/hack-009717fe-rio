@@ -59,6 +59,8 @@ python tools/audit_data.py --include-synthetic --markdown
 
 Каждый участник отвечает за свою часть и участвует в общей проверке перед Demo Day.
 
+Чек-листы участников: [Темирлан — frontend](README.temirlan.md), [Мирас — backend](README.miras.md), [Айназ — аудит данных и демо](participant3-data-audit.md).
+
 ## Скриншоты
 
 Опубликованный сайт: [rio-hackalem-live.vercel.app](https://rio-hackalem-live.vercel.app/). В сценарии «Осенний корпоратив» он показывает 3 из 4 подходящих профилей и подробное объяснение каждой карточки. Визуальный референс: [rio-ui-reference.png](screenshots/rio-ui-reference.png). Фактические снимки сценариев 01–06 сохраняются в этой же папке; в подписи к каждому снимку указываются входные параметры и ожидаемый исход.
