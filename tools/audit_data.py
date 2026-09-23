@@ -20,19 +20,23 @@ LIST_FIELDS = ('categories', 'event_formats', 'languages', 'busy_dates')
 BOOL_FIELDS = ('synthetic', 'city_imputed', 'price_imputed')
 
 
-def audit(path: Path) -> dict:
+def audit(path: Path, extra_paths=()) -> dict:
     errors = []
     rows = []
-    try:
-        with path.open(encoding='utf-8-sig', newline='') as source:
-            reader = csv.DictReader(source)
-            headers = set(reader.fieldnames or [])
-            missing = sorted(REQUIRED - headers)
-            if missing:
-                errors.append(f'Missing columns: {", ".join(missing)}')
-            rows = list(reader)
-    except (OSError, UnicodeError, csv.Error) as exc:
-        return {'file': str(path), 'profiles': 0, 'errors': [str(exc)], 'ok': False}
+    paths = [path, *extra_paths]
+    for current_path in paths:
+        try:
+            with current_path.open(encoding='utf-8-sig', newline='') as source:
+                reader = csv.DictReader(source)
+                headers = set(reader.fieldnames or [])
+                missing = sorted(REQUIRED - headers)
+                if missing:
+                    errors.append(f'{current_path}: missing columns: {", ".join(missing)}')
+                rows.extend(reader)
+        except (OSError, UnicodeError, csv.Error) as exc:
+            errors.append(f'{current_path}: {exc}')
+    if errors and not rows:
+        return {'files': [str(current) for current in paths], 'profiles': 0, 'errors': errors, 'ok': False}
 
     ids = Counter(row.get('id', '') for row in rows)
     duplicates = sorted(identifier for identifier, count in ids.items() if identifier and count > 1)
@@ -87,7 +91,7 @@ def audit(path: Path) -> dict:
                 errors.append(f'{label}: invalid busy date: {value}')
 
     report = {
-        'file': str(path),
+        'files': [str(current) for current in paths],
         'ok': not errors,
         'profiles': len(rows),
         'synthetic_profiles': synthetic,
@@ -124,9 +128,11 @@ def markdown(report: dict) -> str:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('csv_path', nargs='?', default='data/contractors.csv')
+    parser.add_argument('--include-synthetic', action='store_true', help='also audit data/synthetic_profiles.csv')
     parser.add_argument('--markdown', action='store_true', help='print a Markdown report')
     args = parser.parse_args()
-    result = audit(Path(args.csv_path))
+    extra = [Path(args.csv_path).parent / 'synthetic_profiles.csv'] if args.include_synthetic else []
+    result = audit(Path(args.csv_path), extra)
     output = markdown(result) if args.markdown else json.dumps(result, ensure_ascii=False, indent=2)
     print(output)
     sys.exit(0 if result['ok'] else 1)

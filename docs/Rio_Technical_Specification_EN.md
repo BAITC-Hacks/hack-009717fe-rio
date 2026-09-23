@@ -70,9 +70,9 @@ The current version **does not include**:
 
 ## 5. Source Data
 
-The service uses the CSV dataset supplied by the organizers, containing **66 profiles**.
+The service preserves the organizer CSV containing **66 source profiles** and loads a separate team file with **12 additional synthetic profiles**. The runtime catalog therefore contains 78 profiles.
 
-The dataset includes 13 fully synthetic profiles. The team does not add new profiles.
+The supplied dataset includes 13 fully synthetic profiles. Every team-added profile is explicitly marked `synthetic=true` in `data/synthetic_profiles.csv`.
 
 The HTML preview is an additional reference for understanding the catalog structure.
 
@@ -490,7 +490,7 @@ Mandatory checks:
 
 | Check | Acceptance criterion |
 |---|---|
-| Data integrity | 66 unique profiles are loaded; 13 synthetic flags are preserved |
+| Data integrity | 78 unique runtime profiles are loaded; 25 synthetic flags are preserved (13 supplied + 12 team-added) |
 | Availability | A profile unavailable on the selected date never appears |
 | Budget | A price above the budget is excluded; an equal price is accepted |
 | Format | An unsupported format is excluded |

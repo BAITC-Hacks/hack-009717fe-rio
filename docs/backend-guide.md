@@ -66,7 +66,7 @@ The catalog and UI use Russian values. Do not translate category names, language
 
 **Participant 1:** preserve endpoint names and JSON field names. The website relies on `status`, `cards`, `message`, `rejected`, `exclusion_counts` and metadata options. Agree on contract changes before editing either side.
 
-**Participant 3:** the runtime currently reads only `data/contractors.csv`. Additional synthetic profiles in separate files are not automatically loaded. Before integrating them, agree on schema, unique IDs, provenance flags, validation and revised demo/test expectations. Text document frequencies would also need to reflect the intended catalog.
+**Participant 3:** the runtime reads `data/contractors.csv` plus the optional `data/synthetic_profiles.csv`. New records must use the same schema, unique IDs and `synthetic=true`. Run `python3 tools/audit_data.py --include-synthetic --markdown` before changing demos or presenting the expanded catalog.
 
 ## 7. Run Verification
 

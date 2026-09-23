@@ -4,9 +4,10 @@ This document records the data checks and presentation evidence owned by the thi
 
 ## Source snapshot
 
-- Source file: `data/contractors.csv`
-- Profiles: 66
-- Synthetic profiles already present in the supplied catalog: 13
+- Source file: `data/contractors.csv` (66 original profiles)
+- Additional file: `data/synthetic_profiles.csv` (12 team profiles)
+- Runtime profiles: 78
+- Synthetic profiles in runtime: 25 (13 supplied + 12 team-added)
 - Cities: Алматы — 50, Астана — 15, Зарубежье — 1
 - Calendar window: 2026-09-23 through 2026-12-31 (100 days)
 - Categories: 17
@@ -24,7 +25,7 @@ python3 -m unittest discover -s tests -v
 Run the focused catalog audit before the demo:
 
 ```bash
-python3 tools/audit_data.py --markdown
+python3 tools/audit_data.py --include-synthetic --markdown
 ```
 
 Exit code `0` means the catalog passed. A non-zero exit code identifies a data error that must be fixed or explicitly discussed before submission.
