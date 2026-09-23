@@ -81,6 +81,10 @@ class VendorRepository:
     def list(self, filters: dict, limit: int, offset: int) -> tuple[list[dict], int]:
         clauses: list[str] = []
         values: list[object] = []
+        if filters.get("q"):
+            term = f"%{str(filters['q']).strip().lower()}%"
+            clauses.append("(LOWER(v.anon_name) LIKE ? OR LOWER(v.description) LIKE ?)")
+            values.extend((term, term))
         direct = {"city": "v.city = ?", "budget_lte": "v.price_from_kzt <= ?"}
         for key, clause in direct.items():
             if filters.get(key) is not None:

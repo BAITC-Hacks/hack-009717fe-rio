@@ -11,6 +11,7 @@ const labels = {
 let meta;
 let previous = null;
 let requestId = 0;
+let activeController = null;
 
 const escape = value => String(value).replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -62,7 +63,7 @@ function comparison(query, result) {
   }${newNames.length ? ' В подборке появились: ' + escape(newNames.join(', ')) + '.' : ''}</div>`;
 }
 
-function portfolio(profile) {
+function portfolio(profile, expanded = false) {
   const works = profile.top_works || [];
   if (!works.length) return '';
   const cards = works.map(work => {
@@ -74,11 +75,14 @@ function portfolio(profile) {
       : `<div class="work-placeholder" aria-hidden="true"><span>${escape((work.event_format || 'Rio').slice(0, 4))}</span></div>`;
     return `<article class="work-card" data-work-card="${escape(work.id)}">${image}<div class="work-copy"><strong>${escape(work.title)}</strong><span class="work-rating">${escape(rating)}</span><p>${escape(work.description.slice(0, 180))}${work.description.length > 180 ? '…' : ''}</p><div class="rate-row" aria-label="Оценить работу от 1 до 5">${[1, 2, 3, 4, 5].map(score => `<button type="button" class="rate-work" data-work-id="${escape(work.id)}" data-score="${score}" aria-label="Поставить оценку ${score} из 5" aria-pressed="false">${score}★</button>`).join('')}</div><span class="rating-status" data-rating-status="${escape(work.id)}" aria-live="polite"></span></div></article>`;
   }).join('');
-  return `<section class="portfolio"><div class="portfolio-head"><strong>ЛУЧШИЕ РАБОТЫ</strong><span>${profile.published_work_count} опубликовано · по рейтингу клиентов</span></div><div class="work-list">${cards}</div></section>`;
+  return `<details class="portfolio" ${expanded ? 'open' : ''}><summary><span>Портфолио · ${profile.published_work_count}</span><small>по рейтингу клиентов</small></summary><div class="work-list">${cards}</div></details>`;
 }
 
 function card(profile, index, query) {
-  return `<article class="card"><div class="card-top"><div class="avatar" aria-hidden="true">${escape(profile.anon_name.split(' ').slice(0, 2).map(value => value[0]).join(''))}</div><div><h3>${escape(profile.anon_name)}</h3><div class="meta">${escape(query.category)} · ${escape(profile.city)} · № ${index + 1}</div></div><div class="price">от ${money(profile.price_from_kzt)}<small>за мероприятие</small></div></div><div class="why"><strong>ПОЧЕМУ В ПОДБОРКЕ</strong>${escape(profile.explanation)}</div><p class="quote">Из описания профиля: «${escape(profile.evidence)}»</p><div class="tags"><span class="tag">✓ Свободен ${escape(day(query.date))}</span><span class="tag">${escape(profile.languages.join(' / '))}</span><span class="tag">${profile.max_hours === null ? 'Без почасового присутствия' : 'До ' + profile.max_hours + ' ч'}</span><span class="tag ${profile.synthetic ? 'warning' : ''}">${profile.synthetic ? 'Синтетический профиль' : 'Исходный анонимизированный профиль'}</span>${profile.price_imputed ? '<span class="tag warning">Цена проставлена в датасете</span>' : ''}${profile.city_imputed ? '<span class="tag warning">Город проставлен в датасете</span>' : ''}</div>${portfolio(profile)}<details><summary>Подробнее о профиле и подборе</summary><p>${escape(profile.description)}</p><p>Форматы: ${escape(profile.event_formats.join(', '))}.</p><p>ID: ${escape(profile.id)} · Балл текстовых совпадений: ${profile.text_score}. ${query.preferences ? (profile.matched_terms.length ? 'Совпавшие основы слов: ' + escape(profile.matched_terms.join(', ')) + '.' : 'Прямых совпадений слов с пожеланиями нет; обязательные условия выполнены.') : 'Пожелания не заданы: порядок по цене, затем ID.'}</p></details></article>`;
+  const rank = profile.rank || index + 1;
+  const medal = profile.medal || ['gold', 'silver', 'bronze'][index];
+  const medalName = {gold: 'Золото', silver: 'Серебро', bronze: 'Бронза'}[medal];
+  return `<article class="card podium-${medal}" data-rank="${rank}"><div class="rank-badge" aria-label="${rank} место, ${medalName}"><span>№${rank}</span><small>${medalName}</small></div><div class="card-top"><div class="avatar" aria-hidden="true">${escape(profile.anon_name.split(' ').slice(0, 2).map(value => value[0]).join(''))}</div><div class="identity"><h3>${escape(profile.anon_name)}</h3><div class="meta">${escape(query.category)} · ${escape(profile.city)}</div></div><div class="price">от ${money(profile.price_from_kzt)}<small>за мероприятие</small></div></div><div class="why"><strong>ПОЧЕМУ В ТОП-${rank}</strong>${escape(profile.explanation)}</div><p class="quote">«${escape(profile.evidence)}»</p><div class="tags"><span class="tag">✓ Свободен ${escape(day(query.date))}</span><span class="tag">${escape(profile.languages.join(' / '))}</span><span class="tag">${profile.max_hours === null ? 'Без почасового присутствия' : 'До ' + profile.max_hours + ' ч'}</span><span class="tag ${profile.synthetic ? 'warning' : ''}">${profile.synthetic ? 'Синтетический профиль' : 'Исходный профиль'}</span>${profile.price_imputed ? '<span class="tag warning">Цена из датасета</span>' : ''}${profile.city_imputed ? '<span class="tag warning">Город из датасета</span>' : ''}</div>${portfolio(profile, rank === 1)}<details class="profile-details"><summary>Подробнее о профиле</summary><p>${escape(profile.description)}</p><p>Форматы: ${escape(profile.event_formats.join(', '))}.</p><p>ID: ${escape(profile.id)} · Балл текстовых совпадений: ${profile.text_score}. ${query.preferences ? (profile.matched_terms.length ? 'Совпавшие основы слов: ' + escape(profile.matched_terms.join(', ')) + '.' : 'Прямых совпадений слов с пожеланиями нет; обязательные условия выполнены.') : 'Пожелания не заданы: порядок по цене, затем ID.'}</p></details></article>`;
 }
 
 function clientId() {
@@ -126,8 +130,7 @@ function bindCardDeck() {
   const deck = document.querySelector('.card-deck');
   if (!deck) return;
   const cards = [...deck.querySelectorAll('.card')];
-  cards.forEach((item, index) => {
-    item.style.setProperty('--deck-index', index);
+  cards.forEach(item => {
     item.tabIndex = 0;
     item.addEventListener('click', () => {
       cards.forEach(cardItem => cardItem.classList.remove('selected'));
@@ -141,9 +144,6 @@ function bindCardDeck() {
     });
   });
   cards[0]?.classList.add('selected');
-  requestAnimationFrame(() => {
-    deck.style.minHeight = `${Math.max(545, ...cards.map(item => item.scrollHeight + 48))}px`;
-  });
 }
 
 async function search() {
@@ -151,13 +151,18 @@ async function search() {
   const id = ++requestId;
   const query = read();
   const button = $('.primary');
+  activeController?.abort();
+  activeController = new AbortController();
   button.disabled = true;
+  button.querySelector('.button-label').textContent = 'Подбираем…';
+  $('#results').setAttribute('aria-busy', 'true');
   $('#error').hidden = true;
   try {
     const response = await fetch(`${API_BASE}/recommendations`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(query)
+      body: JSON.stringify(query),
+      signal: activeController.signal
     });
     const result = await responseJson(response);
     if (id !== requestId) return;
@@ -193,12 +198,17 @@ async function search() {
       };
     }
   } catch (error) {
+    if (error.name === 'AbortError') return;
     if (id === requestId) {
       $('#error').textContent = error.message || 'Не удалось связаться с сервером. Повторите запрос.';
       $('#error').hidden = false;
     }
   } finally {
-    if (id === requestId) button.disabled = false;
+    if (id === requestId) {
+      button.disabled = false;
+      button.querySelector('.button-label').textContent = 'Найти совпадения';
+      $('#results').setAttribute('aria-busy', 'false');
+    }
   }
 }
 

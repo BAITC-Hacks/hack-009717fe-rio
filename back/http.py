@@ -55,7 +55,10 @@ class BackendApplication:
 
     def recommend(self, payload: dict) -> dict:
         result = self.service.recommend(payload)
-        for card in result["cards"]:
+        podium = ("gold", "silver", "bronze")
+        for index, card in enumerate(result["cards"]):
+            card["rank"] = index + 1
+            card["medal"] = podium[index]
             works, total = self.repository.list_works(card["id"], 3, 0)
             card["top_works"] = works
             card["published_work_count"] = total
@@ -333,6 +336,7 @@ def create_handler(application: BackendApplication, web_root: Path, openapi_path
             if available_on is not None:
                 _calendar_date(available_on, "available_on")
             filters = {
+                "q": _one(query, "q"),
                 "city": _one(query, "city"),
                 "category": _one(query, "category"),
                 "event_format": _one(query, "event_format"),

@@ -46,6 +46,10 @@ class DatabaseTests(unittest.TestCase):
         self.assertTrue(items)
         self.assertTrue(all("Ведущий" in item["categories"] for item in items))
         self.assertTrue(all("2026-10-04" not in item["busy_dates"] for item in items))
+        searched, searched_total = self.repository.list({"q": "юмор"}, 100, 0)
+        self.assertEqual(searched_total, len(searched))
+        self.assertTrue(searched)
+        self.assertTrue(all("юмор" in (item["anon_name"] + " " + item["description"]).lower() for item in searched))
         calendar = self.repository.availability(items[0]["id"], __import__("datetime").date(2026, 10, 1), __import__("datetime").date(2026, 10, 3))
         self.assertEqual(len(calendar["days"]), 3)
 
@@ -127,6 +131,8 @@ class HTTPTests(unittest.TestCase):
             body = json.load(response)
             self.assertEqual(response.status, 200)
             self.assertLessEqual(len(body["cards"]), 3)
+            self.assertEqual([card["rank"] for card in body["cards"]], list(range(1, len(body["cards"]) + 1)))
+            self.assertEqual([card["medal"] for card in body["cards"]], ["gold", "silver", "bronze"][:len(body["cards"])])
             for card in body["cards"]:
                 self.assertIn("top_works", card)
                 self.assertIn("published_work_count", card)

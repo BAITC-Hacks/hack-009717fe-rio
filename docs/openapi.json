@@ -23,6 +23,7 @@
       "get": {
         "summary": "Каталог подрядчиков",
         "parameters": [
+          {"name": "q", "in": "query", "description": "Поиск по анонимному имени и описанию", "schema": {"type": "string"}},
           {"name": "city", "in": "query", "schema": {"type": "string"}},
           {"name": "category", "in": "query", "schema": {"type": "string"}},
           {"name": "event_format", "in": "query", "schema": {"type": "string"}},
@@ -188,7 +189,7 @@
       },
       "RecommendationResponse": {
         "type": "object",
-        "properties": {"status": {"enum": ["matched", "no_category", "no_match"]}, "message": {"type": "string"}, "cards": {"type": "array", "maxItems": 3, "items": {"allOf": [{"$ref": "#/components/schemas/Vendor"}, {"type": "object", "properties": {"explanation": {"type": "string"}, "evidence": {"type": "string"}, "text_score": {"type": "number"}, "matched_terms": {"type": "array", "items": {"type": "string"}}}, "required": ["explanation", "evidence", "text_score", "matched_terms"]}]}}, "pool_count": {"type": "integer"}, "eligible_count": {"type": "integer"}, "rejected": {"type": "array", "items": {"type": "object"}}, "exclusion_counts": {"type": "object", "additionalProperties": {"type": "integer"}}, "elapsed_ms": {"type": "number"}, "request_id": {"type": "string"}},
+        "properties": {"status": {"enum": ["matched", "no_category", "no_match"]}, "message": {"type": "string"}, "cards": {"type": "array", "maxItems": 3, "items": {"allOf": [{"$ref": "#/components/schemas/Vendor"}, {"type": "object", "properties": {"rank": {"type": "integer", "minimum": 1, "maximum": 3}, "medal": {"enum": ["gold", "silver", "bronze"]}, "explanation": {"type": "string"}, "evidence": {"type": "string"}, "text_score": {"type": "number"}, "matched_terms": {"type": "array", "items": {"type": "string"}}}, "required": ["rank", "medal", "explanation", "evidence", "text_score", "matched_terms"]}]}}, "pool_count": {"type": "integer"}, "eligible_count": {"type": "integer"}, "rejected": {"type": "array", "items": {"type": "object"}}, "exclusion_counts": {"type": "object", "additionalProperties": {"type": "integer"}}, "elapsed_ms": {"type": "number"}, "request_id": {"type": "string"}},
         "required": ["status", "message", "cards", "pool_count", "eligible_count", "rejected", "exclusion_counts", "elapsed_ms", "request_id"]
       },
       "Error": {
