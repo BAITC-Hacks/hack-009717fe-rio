@@ -12,6 +12,7 @@
 - Объяснение короткой выдачи, причины исключения каждого кандидата и сравнение двух дат.
 - Пометки синтетических профилей и проставленных при подготовке цен и городов.
 - Шесть демонстрационных сценариев и адаптивный русский интерфейс.
+- SQLite-каталог, портфолио подрядчиков и клиентские оценки работ.
 
 ## Установка и запуск
 
@@ -37,7 +38,7 @@ python -m unittest discover -s tests -v
 python tools/audit_data.py --include-synthetic --markdown
 ```
 
-Публичной deployed-версии нет. Адрес localhost — локальное демо на компьютере, где запущен сервер.
+Публичная демонстрация: **[rio-hackalem-ready.vercel.app](https://rio-hackalem-ready.vercel.app/)**.
 
 ## Сценарий пользователя
 
@@ -60,18 +61,19 @@ python tools/audit_data.py --include-synthetic --markdown
 
 ## Технологии и архитектура
 
-**Backend:** Python, только стандартная библиотека (`http.server`, `csv`, `json`, `datetime`, `unittest`). **Frontend:** HTML, CSS, JavaScript без сборщика. **Данные:** локальный CSV. Разработка выполнена с AI-агентом Codex. В исполняемом сервисе нет LLM, embeddings или внешнего AI API.
+**Backend:** Python и стандартная библиотека (`http.server`, `sqlite3`, `csv`, `json`, `unittest`). **Frontend:** HTML, CSS, JavaScript без сборщика. **Данные:** CSV как seed-источник и SQLite во время работы. Разработка выполнена с AI-агентом Codex. В исполняемом сервисе нет LLM, embeddings или внешнего AI API.
 
 ```text
-Браузер → POST /api/recommend → валидация
+Браузер → POST /api/v1/recommendations → валидация
         → выбор города/категории → жёсткие фильтры
-        → лексическое ранжирование → top-3 + факты + цитаты + аудит
+        → лексическое ранжирование → top-3 + факты + портфолио + аудит
 ```
 
 | Компонент | Назначение |
 |---|---|
-| `app.py` | API, загрузка CSV, фильтры, ранжирование, объяснения, демосценарии |
-| `web/` | Форма, карточки, сравнение дат, адаптивный дизайн |
+| `app.py` | Точка запуска HTTP-сервера и обратная совместимость API |
+| `back/` | SQLite, репозиторий, REST API, фильтры, ранжирование, портфолио и оценки |
+| `web/` | Форма, 3D-карточки, портфолио, рейтинги и адаптивный дизайн |
 | `data/contractors.csv` | Runtime-каталог на 200 профилей и 30 категорий; исходные 66 сохранены |
 | `data/contractors.xlsx` | Excel-копия расширенного каталога с фильтрами и закреплённой строкой |
 | `data/synthetic_profiles.csv` | Отдельный аудит-артефакт с 12 профилями команды, не добавляемый повторно в runtime |
@@ -92,9 +94,9 @@ python tools/audit_data.py --include-synthetic --markdown
 
 ## API
 
-`GET /api/meta` — варианты полей, статистика, границы календаря и готовые запросы.
+`GET /api/v1/meta` — варианты полей, статистика, границы календаря и готовые запросы.
 
-`POST /api/recommend`, `Content-Type: application/json`:
+`POST /api/v1/recommendations`, `Content-Type: application/json`:
 
 ```json
 {

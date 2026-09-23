@@ -43,7 +43,7 @@
 python3 app.py
 ```
 
-Открыть `http://127.0.0.1:8000` или [опубликованный сайт Rio](https://rio-hackalem-live.vercel.app/).
+Открыть `http://127.0.0.1:8000` или [опубликованный сайт Rio](https://rio-hackalem-ready.vercel.app/).
 
 Проверить по порядку:
 

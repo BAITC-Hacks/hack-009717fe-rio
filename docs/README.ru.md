@@ -45,7 +45,7 @@ python tools/audit_data.py --include-synthetic --markdown
 
 Публичной deployed-версии нет. Адрес localhost — локальное демо на компьютере, где запущен сервер.
 
-Опубликованная демонстрация: [rio-hackalem-live.vercel.app](https://rio-hackalem-live.vercel.app/).
+Опубликованная демонстрация: [rio-hackalem-ready.vercel.app](https://rio-hackalem-ready.vercel.app/).
 
 ## Сценарий пользователя
 
@@ -63,7 +63,7 @@ python tools/audit_data.py --include-synthetic --markdown
 
 ## Скриншоты
 
-Опубликованный сайт: [rio-hackalem-live.vercel.app](https://rio-hackalem-live.vercel.app/). В сценарии «Осенний корпоратив» он показывает 3 из 4 подходящих профилей и подробное объяснение каждой карточки. Визуальный референс: [rio-ui-reference.png](screenshots/rio-ui-reference.png). Фактические снимки сценариев 01–06 сохраняются в этой же папке; в подписи к каждому снимку указываются входные параметры и ожидаемый исход.
+Опубликованный сайт: [rio-hackalem-ready.vercel.app](https://rio-hackalem-ready.vercel.app/). В сценарии «Осенний корпоратив» он показывает 3 из 4 подходящих профилей, портфолио и подробное объяснение каждой карточки. Визуальный референс: [rio-ui-reference.png](screenshots/rio-ui-reference.png). Фактические снимки сценариев 01–06 сохраняются в этой же папке; в подписи к каждому снимку указываются входные параметры и ожидаемый исход.
 
 ## Проверка жюри за три минуты
 
