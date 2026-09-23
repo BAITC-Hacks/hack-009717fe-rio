@@ -1,4 +1,4 @@
-import json
+"""Behavioral checks for matching; Russian fixtures mirror the public UI contract."""
 import math
 import unittest
 from datetime import date, timedelta

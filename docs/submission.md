@@ -1,18 +1,20 @@
-# Данные для «Сдать решение»
+# Hackathon Submission Details
 
-**Название:** Rio — умный подбор event-подрядчиков
+**Name:** Rio — Smart Event Vendor Matching
 
-**Кейс:** Умный подбор подрядчиков (#79-lite).
+**Challenge:** Smart Vendor Matching (#79-lite).
 
-**Репозиторий:** https://github.com/BAITC-Hacks/hack-009717fe-rio
+**Repository:** https://github.com/BAITC-Hacks/hack-009717fe-rio
 
-**Описание:** Rio помогает заказчику выбрать до трёх подрядчиков из каталога по городу, дате, формату мероприятия, категории и бюджету. Доступны дополнительные ограничения по языку и длительности и текстовые пожелания. Занятые подрядчики исключаются, каждая карточка содержит конкретное объяснение и цитату из профиля. Отдельно обрабатываются отсутствие категории и отсутствие кандидатов по условиям, объясняется короткая выдача и изменение результатов при смене даты. Используются 66 профилей организаторов с сохранёнными календарями и отметками синтетических данных. Реализованы детерминированное лексическое ранжирование, шесть демонстрационных сценариев, адаптивный интерфейс и автоматические проверки. Стек: Python standard library, HTML/CSS/JavaScript. Запуск: `python app.py`, затем http://127.0.0.1:8000. Проект разработан с AI-агентом Codex; внешние AI API и ключи для запуска не нужны.
+**Description:** Rio helps event customers choose up to three vendors from a catalog using city, date, event format, category and budget. Optional language, duration and free-text preferences are supported. Unavailable vendors are excluded, and each card includes a concrete explanation and a quotation from the profile. The service distinguishes a missing category from candidates failing the constraints, explains short lists and shows calendar-related changes between dates. It uses 66 organizer profiles with preserved calendars and synthetic-data labels. The implementation includes deterministic lexical ranking, six demo scenarios, a responsive Russian-language interface and automated checks. Stack: Python standard library, HTML, CSS and JavaScript. Start with `python app.py`, then open http://127.0.0.1:8000. Development was assisted by the Codex AI agent; no external AI API or keys are required to run the application.
 
-**Развёрнутая версия:** публичной версии нет; доступен локальный запуск по README.
+**Deployed version:** no public deployment; local startup is documented in the README.
 
-## Порядок завершения
+## Completion Steps
 
-1. Убедиться, что последняя версия присутствует в командном репозитории.
-2. На платформе открыть нужный трек и кейс #79-lite.
-3. Нажать «Сдать решение», вставить название, описание и ссылку на репозиторий.
-4. Проверить подтверждение приёма на платформе. Подготовленный текст сам по себе не означает, что решение сдано.
+1. Verify that the approved latest version is present in the assigned team repository.
+2. Open the relevant track and challenge #79-lite on the platform.
+3. Select Submit Solution and enter the name, description and repository link.
+4. Verify the platform's acceptance confirmation. Preparing this text does not submit the project.
+
+The organizer requests a Russian README; a preserved version is available at `docs/README.ru.md`. Developer documentation is English, while the website and its API messages remain Russian by the team's decision.

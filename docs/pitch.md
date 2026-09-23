@@ -1,22 +1,28 @@
-# Защита Rio — три минуты
+# Rio Defense Script — Three Minutes
 
-«Заказчик уже получил каталог. Ему нужно понять, кого выбрать. Rio сокращает выбор до трёх профилей и показывает, почему каждый подходит.
+The customer already has a catalog and needs help deciding whom to choose. Rio narrows the selection to three profiles and explains why each one qualifies.
 
-Сначала проверяем город и категорию, затем календарь, бюджет, формат, язык и длительность. Занятый подрядчик не попадёт в рекомендации. Площадки проходят тот же путь.
+We first check city and category, then availability, budget, event format, language and duration. An unavailable vendor cannot enter the recommendations. Venues follow exactly the same pipeline.
 
-Покажем корпоратив 4 октября. Четыре кандидата проходят условия; выводим трёх. Пожелания влияют на порядок через прозрачный текстовый поиск, а карточки содержат конкретные условия и цитаты. Это объяснимый baseline без генерации выдуманных фактов.
+Let us demonstrate a corporate event on October 4. Four candidates pass the constraints, and we display three. Preferences affect their order through transparent lexical matching. Cards contain specific facts and quotations from the profiles. This is an explainable baseline, without generated claims.
 
-Меняем только дату на 1 октября. Прошлая тройка занята — интерфейс прямо говорит об этом и показывает новых кандидатов. Повторный запрос не меняет порядок.
+Now we change only the date to October 1. The previous three vendors are unavailable. The interface explicitly explains this and shows different candidates. Repeating the request preserves the order.
 
-У флористов показываем два варианта и объясняем, почему не три. При слишком низком бюджете показываем причины отказа. Отсутствующая категория — отдельное состояние.
+For florists, we show two options and explain why there are fewer than three. With an insufficient budget, we show rejection reasons. A category missing from a city is a separate outcome.
 
-Сервис запускается одной командой без ключей и зависимостей. Все 66 профилей сохранены; синтетические данные и проставленные цены помечены. Дальше можно подключить embeddings и живые календари, сохранив строгие фильтры и проверяемые объяснения».
+The service starts with one command and requires no keys or third-party Python packages. All 66 profiles are preserved, and synthetic profiles and imputed prices are labeled. Future development could add embeddings and live calendars while retaining strict filters and verifiable explanations.
 
-## Вопросы жюри
+## Questions from Judges
 
-- **Где AI?** Разработка с AI-агентом Codex. Внутри сервиса — лексический baseline, не LLM. Не заявляем семантическое понимание; следующий шаг — embeddings с измерением качества.
-- **Почему не только цена?** При наличии пожеланий первым критерием идёт взвешенное совпадение текста; цена — следующим. Важнее сама конкретная аргументация в карточках.
-- **Почему мало в декабре?** Это сезонная занятость исходного датасета. Не добавляем вымышленных свободных кандидатов.
-- **Почему не соседний город?** Задача — выбор внутри выбранного каталога, а не расширение списка.
-- **Что означает цена «от»?** Начальную стоимость; конечную смету по этим данным определить нельзя.
-- **Как воспроизвести?** `python app.py`, шесть кнопок сценариев. Тесты: `python -m unittest discover -s tests -v`.
+- **Where is the AI?** Development used the Codex AI agent. The running service uses a lexical baseline, not an LLM. We do not claim semantic understanding. A possible next step is embeddings with measured quality.
+- **Why not rank only by price?** When preferences are supplied, weighted text overlap comes first and price second. Specific evidence on each card is more important than the order alone.
+- **Why are there so few December options?** The source calendars reflect seasonal demand. We do not invent available candidates.
+- **Why not search a neighboring city?** The challenge is to select within the chosen catalog, not expand it automatically.
+- **What does a starting price mean?** It is a minimum advertised price, not a confirmed final quote.
+- **How can we reproduce the result?** Run `python app.py` and use the six numbered scenario buttons. Run checks with `python -m unittest discover -s tests -v`.
+
+## Suggested Speaking Order
+
+1. Participant 1 demonstrates the Russian-language website and the user journey.
+2. Participant 2 explains validation, filtering, ranking and deterministic tie-breaking.
+3. Participant 3 demonstrates tests, rare and empty outcomes, source integrity and limitations.

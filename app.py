@@ -1,4 +1,8 @@
-"""Rio: reproducible contractor recommendations, Python standard library only."""
+"""Rio: deterministic vendor recommendations using the Python standard library.
+
+Developer documentation and identifiers are English. Catalog values and messages
+remain Russian because they are displayed by the existing Russian-language UI.
+"""
 import argparse
 import csv
 import json
@@ -16,6 +20,7 @@ START, END = '2026-09-23', '2026-12-31'
 
 
 def load_profiles():
+    """Load the organizer CSV and convert delimited fields into typed values."""
     with (ROOT / 'data/contractors.csv').open(encoding='utf-8-sig', newline='') as source:
         profiles = list(csv.DictReader(source))
     for p in profiles:
@@ -43,6 +48,7 @@ DF = Counter(t for p in PROFILES for t in tokens(p['description']))
 
 
 def validate(q):
+    """Reject invalid requests before filtering; errors are user-facing Russian."""
     if not isinstance(q, dict):
         raise ValueError('Запрос должен быть JSON-объектом.')
     for field in ('city', 'category', 'event_format', 'date'):
@@ -69,6 +75,7 @@ def validate(q):
 
 
 def reasons(p, q):
+    """Return every failed constraint; a null hour limit means not applicable."""
     return [key for key, failed in (
         ('busy', q['date'] in p['busy_dates']),
         ('budget', p['price_from_kzt'] > q['budget']),
@@ -83,6 +90,11 @@ def money(value):
 
 
 def recommend(q, profiles=None):
+    """Filter, rank and explain up to three candidates without relaxing constraints.
+
+    The optional profile list supports isolated tests. Text ranking uses the
+    original catalog's document frequencies, then price and ID break ties.
+    """
     validate(q)
     profiles = PROFILES if profiles is None else profiles
     pool = [p for p in profiles if p['city'] == q['city'] and q['category'] in p['categories']]
@@ -121,6 +133,7 @@ def recommend(q, profiles=None):
 
 
 def demos():
+    """Find reproducible examples in the real calendars, not canned responses."""
     base = dict(city='Алматы', category='Ведущий', event_format='корпоратив', budget=1500000, hours=4, language='русский', preferences='интеллигентный юмор импровизация')
     autumn = [date(2026, 10, d).isoformat() for d in range(1, 32)]
     first = next({**base, 'date': d} for d in autumn if recommend({**base, 'date': d})['eligible_count'] > 3)
@@ -137,6 +150,7 @@ def demos():
 
 
 class Handler(SimpleHTTPRequestHandler):
+    """Expose catalog metadata, matching, and an allowlisted set of UI assets."""
     def json_response(self, value, status=200):
         body = json.dumps(value, ensure_ascii=False, allow_nan=False).encode()
         self.send_response(status)
