@@ -38,7 +38,7 @@ python -m unittest discover -s tests -v
 python tools/audit_data.py --include-synthetic --markdown
 ```
 
-Публичная демонстрация: **[rio-hackalem-ready.vercel.app](https://rio-hackalem-ready.vercel.app/)**.
+Публичная демонстрация: **[rio-hackalem-podium.vercel.app](https://rio-hackalem-podium.vercel.app/)**.
 
 ## Сценарий пользователя
 
