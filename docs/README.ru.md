@@ -114,6 +114,8 @@ python tools/audit_data.py --include-synthetic --markdown
 
 ## API
 
+Основной API версионирован через `/api/v1`, данные хранятся в автоматически создаваемой SQLite-базе. Полный контракт и схема описаны в [`backend-api.ru.md`](backend-api.ru.md), OpenAPI — в [`openapi.json`](openapi.json). Старые маршруты ниже сохранены как совместимые алиасы для встроенного интерфейса.
+
 `GET /api/meta` — варианты полей, статистика, границы календаря и готовые запросы.
 
 `POST /api/recommend`, `Content-Type: application/json`:
