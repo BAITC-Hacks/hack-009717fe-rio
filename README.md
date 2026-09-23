@@ -76,7 +76,8 @@ Browser -> POST /api/recommend -> validation
 |---|---|
 | `app.py` | API, CSV loading, filters, ranking, explanations and demo queries |
 | `web/` | Form, cards, date comparison and responsive styling |
-| `data/contractors.csv` | Original 66 profiles, unchanged |
+| `data/contractors.csv` | Runtime catalog: 200 profiles across 30 categories; original 66 preserved |
+| `data/contractors.xlsx` | Excel copy of the catalog with filters and a frozen header |
 | `tests/test_app.py` | Behavioral and acceptance checks |
 | `docs/` | Specification, guides, pitch, submission text and source materials |
 | `start.ps1` | Windows launcher |
@@ -86,7 +87,7 @@ Browser -> POST /api/recommend -> validation
 1. Validate required fields, positive budget and optional hours, known formats/languages and the calendar date. Dates outside September 23–December 31, 2026 are rejected: missing calendar coverage must not be interpreted as availability.
 2. Select profiles by exact city and membership in the category array. Travel mentioned in a description does not automatically expand the geographic filter.
 3. Exclude unavailable profiles, starting prices above budget, unsupported formats, missing requested languages and insufficient hours. A null `max_hours` means attendance is not hourly. Constraints are never silently relaxed.
-4. Tokenize preferences, normalize the Russian letter yo to ye, and discard short and selected stop words. Use the first six letters for approximate word-form matching. The score is the sum of `ln(1 + N / (1 + df))` over unique matching prefixes, where N=66 and df is the number of source descriptions containing a prefix. Rarer matches have greater weight. Break ties by lower price, then string ID. Sum in sorted order to avoid nondeterminism.
+4. Tokenize preferences, normalize the Russian letter yo to ye, and discard short and selected stop words. Use the first six letters for approximate word-form matching. The score is the sum of `ln(1 + N / (1 + df))` over unique matching prefixes, where N=200 and df is the number of source descriptions containing a prefix. Rarer matches have greater weight. Break ties by lower price, then string ID. Sum in sorted order to avoid nondeterminism.
 5. Build a factual explanation and select a quotation with the most matching prefixes, truncated to approximately 240 characters. The full description remains available.
 6. Return cards and an exclusion audit. Reason counts can overlap: a vendor may be both unavailable and over budget.
 
@@ -117,7 +118,7 @@ Responses contain `status` (`matched`, `no_category`, `no_match`), `message`, `c
 
 ## Data, Sources and External Services
 
-The runtime catalog contains 66 anonymized organizer profiles, including 13 synthetic profiles. No additional profiles are loaded. Calendars and provenance flags are preserved. The CSV and HTML preview represent the same catalog.
+The runtime catalog contains 200 profiles across 30 categories, including 147 synthetic profiles. The original 66 records are preserved unchanged; 134 generated demonstration profiles add 13 categories. New profiles have synthetic=True and price_imputed=True; their descriptions, prices and calendars are fictional. The linked source CSV and HTML preview represent the original 66-record catalog. The local Excel copy contains the expanded catalog.
 
 - [Challenge brief](https://docs.google.com/document/d/1rhR2HFY164BrnkIP39N3usY9fNY4JeAgkPxEzbqL00w/edit)
 - [CSV dataset](https://drive.google.com/file/d/1uUCu-szctwaTaV0-Yfg3FKHY8M3lQ3vw/view)
@@ -128,7 +129,7 @@ Matching is local. The browser may load Manrope from Google Fonts; a system font
 
 ## Verification
 
-Ten automated tests cover data integrity; constraint checks across 100 dates and 17 categories; deterministic ordering under catalog reordering; all three outcomes and demos; calendar-driven date changes; budget boundaries; null hour limits; optional filters; invalid requests; grounded quotations; and execution time. Individual tests may cover several properties.
+Ten automated tests cover data integrity; constraint checks across 100 dates and 30 categories; deterministic ordering under catalog reordering; all three outcomes and demos; calendar-driven date changes; budget boundaries; null hour limits; optional filters; invalid requests; grounded quotations; and execution time. Individual tests may cover several properties.
 
 Run the test command above for current results. Prior local runs completed all ten tests in approximately 0.3 seconds. These measurements are not a production load guarantee.
 

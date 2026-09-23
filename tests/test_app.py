@@ -11,9 +11,10 @@ class RecommendationTests(unittest.TestCase):
         self.q = dict(city='Алматы', category='Ведущий', event_format='корпоратив', date='2026-10-01', budget=1500000, hours=4, language='русский', preferences='юмор импровизация')
 
     def test_source_integrity(self):
-        self.assertEqual(len(PROFILES), 66)
-        self.assertEqual(len({p['id'] for p in PROFILES}), 66)
-        self.assertEqual(sum(p['synthetic'] for p in PROFILES), 13)
+        self.assertEqual(len(PROFILES), 200)
+        self.assertEqual(len({p['id'] for p in PROFILES}), 200)
+        self.assertEqual(len(OPTIONS['categories']), 30)
+        self.assertEqual(sum(p['synthetic'] for p in PROFILES), 147)
         for p in PROFILES:
             self.assertGreater(p['price_from_kzt'], 0)
             for d in p['busy_dates']:
